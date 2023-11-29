@@ -103,7 +103,8 @@ const data = {
 };
 
 const chartCanvas = document.getElementById("myChart").getContext("2d");
-Chart.defaults.font.size = 16;
+Chart.defaults.font.size = 18;
+Chart.defaults.font.family = "sans-serif";
 Chart.register(ChartDataLabels);
 
 const chart = new Chart(chartCanvas, {
@@ -131,6 +132,14 @@ const chart = new Chart(chartCanvas, {
 					return context.dataset.label === "Temperature °C" ? value.toFixed(2) + " °C" : value.toFixed(2) + " %";
 				},
 			},
+			legend: {
+				display: true,
+				position: 'bottom',
+				title: {
+				  display: true,
+				  padding: 10,
+				},
+			},
 		},
 		scales: {
 			y: {
@@ -139,6 +148,7 @@ const chart = new Chart(chartCanvas, {
 					display: true,
 					color: "rgba(155, 155, 155, 0.1)",
 				},
+				max: 100,
 			},
 			x: {
 				offset: true, // add space to the end of the chart
@@ -146,8 +156,10 @@ const chart = new Chart(chartCanvas, {
 					display: true,
 					color: "rgba(155, 155, 155, 0.1)",
 				},
-
 			},
+		},
+		labels: {
+			padding: 10,
 		},
 	},
 });
