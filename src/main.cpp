@@ -20,10 +20,15 @@ DHT dht(DHTPIN, DHTTYPE);
 
 void connectToWifi();
 void setupWebPages();
-String getValuesJSON();
-void sendReadingEvent();
 void setUpTime();
+
+void storeReading(float temperature, float humidity, int timestamp);
+String getValuesJSON(float temperature, float humidity, int timestamp);
+
 void sendWifiStatusEvent();
+void sendReadingEvent(float temperature, float humidity, int timestamp);
+
+void sendAllReadings();
 
 void setup()
 {
@@ -48,13 +53,17 @@ int readingCooldown = 0;
 int wifiInterval = 10000;
 int wifiCooldown = 0;
 
+time_t now;
+struct tm timeinfo;
+
 void loop()
 {
   if (millis() - readingCooldown >= readingInterval)
   {
     readingCooldown = millis();
     Serial.println("Sending readings");
-    sendReadingEvent();
+    sendReadingEvent(dht.readTemperature(), dht.readHumidity(), time(&now));
+    storeReading(dht.readTemperature(), dht.readHumidity(), time(&now));
   }
 
   if (millis() - wifiCooldown >= wifiInterval)
@@ -102,18 +111,63 @@ void setupWebPages()
                     { request->send(404, "text/plain", "Not found"); });
 
   events.onConnect([](AsyncEventSourceClient *client)
-                   {
+{
     if (client->lastId())
     {
       Serial.printf("Client reconnected! Last message ID that it got is: %u\n", client->lastId());
-    } });
+    }
+    else
+    {
+      Serial.printf("New client connected!\n");
+    }
+      sendWifiStatusEvent();
+      sendAllReadings();
+ });
 
   server.addHandler(&events);
 }
 
-void sendReadingEvent()
+void sendAllReadings()
 {
-  events.send(getValuesJSON().c_str(), "newReadings", millis());
+  // Open file for reading
+  File file = SPIFFS.open("/readings.txt");
+
+  if (!file)
+  {
+    Serial.println("There was an error opening the file for reading");
+    return;
+  }
+
+  Serial.println("Reading from file");
+
+  // For each line in the file
+  while (file.available())
+  {
+    // Read the line
+    String line = file.readStringUntil('\n');
+
+    // {"temperature": 26.70, "humidity": 44.00, "timestamp": 1701273256}
+    // Parse the JSON
+    DeserializationError error = deserializeJson(readings, line);
+    float temperature = readings["temperature"];
+    float humidity = readings["humidity"];
+    int timestamp = readings["timestamp"];
+
+    // Return values in JSON
+    readings["temperature"] = temperature;
+    readings["humidity"] = humidity;
+    readings["timestamp"] = timestamp;
+
+    String values;
+    serializeJson(readings, values);
+
+    events.send(values.c_str(), "newReadings", millis());
+  }
+}
+
+void sendReadingEvent(float temperature, float humidity, int timestamp)
+{
+  events.send(getValuesJSON(temperature, humidity, timestamp).c_str(), "newReadings", millis());
 }
 
 void sendWifiStatusEvent()
@@ -131,14 +185,18 @@ void sendWifiStatusEvent()
 }
 
 // Send values to web page
-String getValuesJSON()
+String getValuesJSON(float temperature, float humidity, int timestamp = 0)
 {
-  float temperature = dht.readTemperature();
-  float humidity = dht.readHumidity();
+  if (isnan(temperature) || isnan(humidity))
+  {
+    Serial.println("Failed to read from DHT sensor!");
+    return "";
+  }
 
   // Return values in JSON
   readings["temperature"] = temperature;
   readings["humidity"] = humidity;
+  readings["timestamp"] = timestamp;
 
   String values;
   serializeJson(readings, values);
@@ -174,4 +232,31 @@ void setUpTime()
   time(&now);
   localtime_r(&now, &timeinfo);
   Serial.println(asctime(&timeinfo));
+}
+
+void storeReading(float temperature, float humidity, int timestamp)
+{
+  Serial.println("Storing readings");
+
+  // Open file for writing
+  File file = SPIFFS.open("/readings.txt", FILE_APPEND);
+
+  if (!file)
+  {
+    Serial.println("There was an error opening the file for writing");
+    return;
+  }
+
+  Serial.println("Writing to file");
+
+  String row = "{\"temperature\": " + String(temperature) + ", \"humidity\": " + String(humidity) + ", \"timestamp\": " + String(timestamp) + "}";
+  Serial.println(row);
+
+  // Append readings to file
+  file.println(row);
+
+  // Close the file
+  file.close();
+
+  Serial.println("Reading stored");
 }

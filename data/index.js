@@ -1,22 +1,10 @@
-const HOW_MANY_SHOW = 10;
+const HOW_MANY_SHOW = 9;
 const SECONDS_TO_DISCONNECT = 30;
 
 if (!!window.EventSource) {
 	console.log("Start event source!");
 	var source = new EventSource("/events");
 }
-
-// // Random data
-// setInterval(() => {
-// 	if (!source) return;
-
-// 	newReading({
-// 		// 20 - 30
-// 		temperature: 20 + Math.random() * 10,
-// 		// 45 - 55
-// 		humidity: 45 + Math.random() * 10,
-// 	});
-// }, 1000);
 
 source.addEventListener(
 	"newReadings",
@@ -68,11 +56,10 @@ setInterval(() => {
 }, 1000);
 
 function newReading(data) {
-	data.time = new Date().getTime();
 	readings.push({
 		temperature: data.temperature,
 		humidity: data.humidity,
-		time: data.time,
+		timestamp: data.timestamp,
 	});
 
 	// Remove old data
@@ -85,7 +72,7 @@ function newReading(data) {
 	}
 
 	// Add new data
-	chart.data.labels.push(getDateFormat(new Date(readings[readings.length - 1].time)));
+	chart.data.labels.push(getDateFormat(new Date(readings[readings.length - 1].timestamp * 1000)));
 	chart.data.datasets[0].data.push(readings[readings.length - 1].temperature);
 	chart.data.datasets[1].data.push(readings[readings.length - 1].humidity);
 	chart.update();
@@ -94,7 +81,9 @@ function newReading(data) {
 var readings = [];
 
 const data = {
-	labels: readings.map((r) => getDateFormat(new Date(r.time))),
+	labels: readings.map((r) => {
+		return getDateFormat(new Date(r.timestamp * 1000));
+	}),
 	datasets: [
 		{
 			label: "Temperature °C",
@@ -118,40 +107,50 @@ Chart.defaults.font.size = 16;
 Chart.register(ChartDataLabels);
 
 const chart = new Chart(chartCanvas, {
-    type: "line",
-    data: data,
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: {
-            duration: 500,
-        },
-        plugins: {
-            datalabels: {
-                display: "auto",
-                color: function (context) {
-                    return context.dataset.label === "Temperature °C" ? "rgb(255, 99, 132)" : "rgb(75, 192, 255)";
-                },
-                anchor: "end",
-                align: "top",
-                offset: 4, // You can adjust the offset of the labels
-                formatter: function (value, context) {
-                    return context.dataset.label === "Temperature °C" ? value.toFixed(2) + " °C" : value.toFixed(2) + " %";
-                },
-            },
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-            },
-            x: {
-                offset: true, // add space to the end
-                min: Math.max(...data.datasets.map(dataset => Math.max(...dataset.data))) * 1.2, // adjust as needed
-            },
-        },
-    },
-});
+	type: "line",
+	data: data,
+	options: {
+		layout: {
+			padding: 20,
+		},
+		responsive: true,
+		maintainAspectRatio: false,
+		animation: {
+			duration: 500,
+		},
+		plugins: {
+			datalabels: {
+				display: "auto",
+				color: function (context) {
+					return context.dataset.label === "Temperature °C" ? "rgb(255, 99, 132)" : "rgb(75, 192, 255)";
+				},
+				anchor: "end",
+				align: "top",
+				offset: 4, // You can adjust the offset of the labels
+				formatter: function (value, context) {
+					return context.dataset.label === "Temperature °C" ? value.toFixed(2) + " °C" : value.toFixed(2) + " %";
+				},
+			},
+		},
+		scales: {
+			y: {
+				beginAtZero: true,
+				grid: {
+					display: true,
+					color: "rgba(155, 155, 155, 0.1)",
+				},
+			},
+			x: {
+				offset: true, // add space to the end of the chart
+				grid: {
+					display: true,
+					color: "rgba(155, 155, 155, 0.1)",
+				},
 
+			},
+		},
+	},
+});
 
 // HH:MM - 15:20
 function getDateFormat(date) {
