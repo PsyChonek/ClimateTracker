@@ -4,13 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="index.css">
+
 <head>
     <title>Climate Tracker</title>
 </head>
+
 <body>
     <div class="header">
         <h2>Climate Tracker</h2>
         <h3 id="wifiStatus">Wifi Status</h3>
+        <div class="settings">
+            <div class="inputContainer">
+                <input type="number" class="inputNumber" id="howManyShow" placeholder="10" min="1" max="1000" value="10">
+                <input type="number" class="inputNumber" id="howManySkip" placeholder="0" min="0" max="1000" value="0">
+            </div>
+            <div class="inputContainer">
+                <input type="number" class="inputNumber" id="labelAngle" placeholder="45" min="0" max="90" value="45">
+                <div class="dataCountContainer">
+                    <div id="dataCount">0</div>
+                </div>
+            </div>
+            <div class="pickerContainer">
+                <input class="datePicker" type="date" id="dateFrom" value="2020-01-01">
+                <input class="datePicker" type="date" id="dateTo" value="2020-12-31">
+            </div>
+            <div class="pickerContainer">
+                <input class="datePicker" type="time" id="timeFrom" value="00:00">
+                <input class="datePicker" type="time" id="timeTo" value="23:59">
+            </div>
+        </div>
     </div>
     <div id="chartContainer">
         <canvas id="myChart"></canvas>
@@ -19,4 +41,5 @@
 <script src="chart.umd.min.js"></script>
 <script src="chartjs-plugin-datalabels.js"></script>
 <script src="index.js"></script>
+
 </html>

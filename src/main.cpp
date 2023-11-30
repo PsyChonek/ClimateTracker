@@ -11,10 +11,12 @@
 #define DHTTYPE DHT11
 #define DHTPIN 13
 
+#define CHUNK_SIZE 10
+
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
-StaticJsonDocument<256> readings;
-StaticJsonDocument<256> wifiStatus;
+StaticJsonDocument<64> reading;
+StaticJsonDocument<64> wifiStatus;
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -111,7 +113,7 @@ void setupWebPages()
                     { request->send(404, "text/plain", "Not found"); });
 
   events.onConnect([](AsyncEventSourceClient *client)
-{
+                   {
     if (client->lastId())
     {
       Serial.printf("Client reconnected! Last message ID that it got is: %u\n", client->lastId());
@@ -121,8 +123,7 @@ void setupWebPages()
       Serial.printf("New client connected!\n");
     }
       sendWifiStatusEvent();
-      sendAllReadings();
- });
+      sendAllReadings(); });
 
   server.addHandler(&events);
 }
@@ -139,6 +140,8 @@ void sendAllReadings()
   }
 
   Serial.println("Reading from file");
+  String values = "{\"data\": [";
+  int chunkIndex = 0;
 
   // For each line in the file
   while (file.available())
@@ -146,28 +149,35 @@ void sendAllReadings()
     // Read the line
     String line = file.readStringUntil('\n');
 
-    // {"temperature": 26.70, "humidity": 44.00, "timestamp": 1701273256}
-    // Parse the JSON
-    DeserializationError error = deserializeJson(readings, line);
-    float temperature = readings["temperature"];
-    float humidity = readings["humidity"];
-    int timestamp = readings["timestamp"];
+    values += line;
+    chunkIndex++;
 
-    // Return values in JSON
-    readings["temperature"] = temperature;
-    readings["humidity"] = humidity;
-    readings["timestamp"] = timestamp;
+    if (chunkIndex == CHUNK_SIZE)
+    {
+      values += "]}";
 
-    String values;
-    serializeJson(readings, values);
-
-    events.send(values.c_str(), "newReadings", millis());
+      events.send(values.c_str(), "allReadings", millis());
+      values = "{\"data\": [";
+      chunkIndex = 0;
+      delay(100);
+    }
+    else if (file.available())
+    {
+      values += ",";
+    }
   }
+
+  values += "]}";
+
+  events.send(values.c_str(), "allReadings", millis());
+
+  // Close the file
+  file.close();
 }
 
 void sendReadingEvent(float temperature, float humidity, int timestamp)
 {
-  events.send(getValuesJSON(temperature, humidity, timestamp).c_str(), "newReadings", millis());
+  events.send(getValuesJSON(temperature, humidity, timestamp).c_str(), "newReading", millis());
 }
 
 void sendWifiStatusEvent()
@@ -194,12 +204,12 @@ String getValuesJSON(float temperature, float humidity, int timestamp = 0)
   }
 
   // Return values in JSON
-  readings["temperature"] = temperature;
-  readings["humidity"] = humidity;
-  readings["timestamp"] = timestamp;
+  reading["temperature"] = temperature;
+  reading["humidity"] = humidity;
+  reading["timestamp"] = timestamp;
 
   String values;
-  serializeJson(readings, values);
+  serializeJson(reading, values);
   return values;
 }
 
