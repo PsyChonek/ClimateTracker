@@ -4,7 +4,7 @@ var labelAngle = 0;
 const SECONDS_TO_DISCONNECT = 30;
 
 var inputHowManyShow = document.getElementById("howManyShow");
-inputHowManyShow.addEventListener("keyup", (e) => {
+inputHowManyShow.addEventListener("change", (e) => {
 	howManyShow = e.target.value;
 	updateChart();
 	storeSettings();
@@ -42,7 +42,7 @@ timeTo.addEventListener("change", (e) => {
 });
 
 var inputHowManySkip = document.getElementById("howManySkip");
-inputHowManySkip.addEventListener("keyup", (e) => {
+inputHowManySkip.addEventListener("change", (e) => {
 	howManySkip = e.target.value;
 	updateChart();
 	storeSettings();
@@ -51,7 +51,7 @@ inputHowManySkip.addEventListener("keyup", (e) => {
 howManySkip = inputHowManySkip.value;
 
 var inputLabelAngle = document.getElementById("labelAngle");
-inputLabelAngle.addEventListener("keyup", (e) => {
+inputLabelAngle.addEventListener("change", (e) => {
 	labelAngle = e.target.value * -1;
 	chart.options.plugins.datalabels.rotation = labelAngle;
 	updateChart();

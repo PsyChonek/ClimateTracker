@@ -4,6 +4,7 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "time.h"
+#include "soc/rtc_wdt.h"
 
 #define ssid "*********"
 #define password "12341234"
@@ -11,7 +12,7 @@
 #define DHTTYPE DHT11
 #define DHTPIN 13
 
-#define CHUNK_SIZE 10
+#define CHUNK_SIZE 75
 
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
@@ -130,6 +131,7 @@ void setupWebPages()
 
 void sendAllReadings()
 {
+  rtc_wdt_disable();        // Disables the wdt service
   // Open file for reading
   File file = SPIFFS.open("/readings.txt");
 
@@ -159,7 +161,7 @@ void sendAllReadings()
       events.send(values.c_str(), "allReadings", millis());
       values = "{\"data\": [";
       chunkIndex = 0;
-      delay(100);
+      delay(5);
     }
     else if (file.available())
     {
@@ -173,6 +175,7 @@ void sendAllReadings()
 
   // Close the file
   file.close();
+  rtc_wdt_enable();         // Enables the wdt service
 }
 
 void sendReadingEvent(float temperature, float humidity, int timestamp)
