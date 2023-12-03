@@ -4,7 +4,6 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "time.h"
-#include "soc/rtc_wdt.h"
 
 #define ssid "*********"
 #define password "12341234"
@@ -12,7 +11,8 @@
 #define DHTTYPE DHT11
 #define DHTPIN 13
 
-#define CHUNK_SIZE 75
+#define CHUNK_SIZE 50
+#define COOLDOWN 1000
 
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
@@ -123,15 +123,41 @@ void setupWebPages()
     {
       Serial.printf("New client connected!\n");
     }
-      sendWifiStatusEvent();
-      sendAllReadings(); });
+      sendWifiStatusEvent(); });
+
+  server.on("/readings", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/readings.txt", "text/plain"); });
+
+  server.on("/readings", HTTP_DELETE, [](AsyncWebServerRequest *request)
+            {
+              SPIFFS.remove("/readings.txt");
+              request->send(200, "text/plain", "Readings deleted");
+            });	
+  
+  server.on("/readings", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
+                // body
+                String body;
+                if (request->hasParam("plain", true))
+                {
+                  body = request->getParam("plain", true)->value();
+                }
+                else
+                {
+                  request->send(400, "text/plain", "Body not found");
+                  return;
+                }
+            });
+
+  server.on("/readingsoption", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/readingsoptions.html", "text/html"); });
 
   server.addHandler(&events);
 }
 
+/* DEPRECATED */
 void sendAllReadings()
 {
-  rtc_wdt_disable();        // Disables the wdt service
   // Open file for reading
   File file = SPIFFS.open("/readings.txt");
 
@@ -157,11 +183,11 @@ void sendAllReadings()
     if (chunkIndex == CHUNK_SIZE)
     {
       values += "]}";
-
+      delay(COOLDOWN / 2);
       events.send(values.c_str(), "allReadings", millis());
+      delay(COOLDOWN / 2);
       values = "{\"data\": [";
       chunkIndex = 0;
-      delay(5);
     }
     else if (file.available())
     {
@@ -175,7 +201,6 @@ void sendAllReadings()
 
   // Close the file
   file.close();
-  rtc_wdt_enable();         // Enables the wdt service
 }
 
 void sendReadingEvent(float temperature, float humidity, int timestamp)

@@ -350,6 +350,30 @@ function updateDataCount() {
 	dataCount.innerHTML = allReadings.length;
 }
 
+// Load file from /readings.txt and import data
+function loadFromFile() {
+	fetch("/readings.txt")
+		.then((response) => response.text())
+		.then((text) => {
+			var data = text.split("\n");
+			data.forEach((d) => {
+				if (!d) return;
+				try {
+					var reading = JSON.parse(d);
+					allReadings.push(reading);
+				}
+				catch (e) {
+					console.log("Error parsing reading", e);
+					console.log("Reading", d);
+				}
+			});
+
+			orderData();
+			updateChart();
+			updateDataCount();
+		});
+}
+
 // Store settings to local storage
 function storeSettings() {
 	var settings = {
@@ -379,3 +403,4 @@ function loadSettings() {
 }
 
 loadSettings();
+loadFromFile();
