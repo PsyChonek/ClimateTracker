@@ -16,7 +16,7 @@ var dateFrom = document.getElementById("dateFrom");
 var dateTo = document.getElementById("dateTo");
 
 dateFrom.value = new Date().toISOString().split("T")[0];
-dateTo.value = new Date(new Date().getTime() + 1000 * 60 * 60 * 24).toISOString().split("T")[0];
+dateTo.value = new Date().toISOString().split("T")[0];
 
 dateFrom.addEventListener("change", (e) => {
 	console.log("dateFrom", e.target.value);
@@ -258,7 +258,7 @@ const chart = new Chart(chartCanvas, {
 				align: "top",
 				offset: 4, // You can adjust the offset of the labels
 				formatter: function (value, context) {
-					return context.dataset.label === "Temperature °C" ? value.toFixed(2) + " °C" : value.toFixed(2) + " %";
+					return context.dataset.label === "Temperature °C" ? value.toFixed(1) + " °C" : value.toFixed(0) + " %";
 				},
 				rotation: labelAngle,
 			},
