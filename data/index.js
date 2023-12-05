@@ -44,7 +44,7 @@ timeTo.addEventListener("input", (e) => {
 
 var inputHowManySkip = document.getElementById("howManySkip");
 inputHowManySkip.addEventListener("input", (e) => {
-	howManySkip = e.target.value - 1;
+	howManySkip = e.target.value;
 	updateChart();
 	storeSettings();
 });
@@ -167,12 +167,14 @@ function filterData() {
 		return r.timestamp * 1000 >= dateTimeFromValue && r.timestamp * 1000 <= dateTimeToValue;
 	});
 
-	// Filter howManySkip always show first and last
-	filteredReadings = filteredReadings.filter((r, index) => {
-		return index % (parseInt(howManySkip) + 1) === 0 || index === filteredReadings.length - 1;
-	});
+	if (howManySkip !== "0") {
+		// Filter howManySkip always show first and last
+		filteredReadings = filteredReadings.filter((r, index) => {
+			return index % parseInt(howManySkip) === 0 || index === filteredReadings.length - 1;
+		});
+	}
 
-	showDate = new Date(filteredReadings[filteredReadings.length - 1].timestamp*1000).getDay() != new Date(filteredReadings[0].timestamp*1000).getDay()
+	showDate = new Date(filteredReadings[filteredReadings.length - 1].timestamp * 1000).getDay() != new Date(filteredReadings[0].timestamp * 1000).getDay();
 }
 
 // Load only last HOW_MANY_SHOW readings
@@ -180,7 +182,7 @@ function updateChart() {
 	clearChart();
 	filterData();
 
-	for (let i = filteredReadings.length - howManyShow - 1; i < filteredReadings.length; i++) {
+	for (let i = filteredReadings.length - howManyShow; i < filteredReadings.length; i++) {
 		if (!filteredReadings[i]) continue;
 		addToChart(filteredReadings[i]);
 	}
@@ -280,7 +282,6 @@ const chart = new Chart(chartCanvas, {
 				var ctx = chart.ctx;
 				var dataset = chart.data.datasets[0];
 				var meta = chart.getDatasetMeta(0);
-				var data = dataset.data;
 
 				meta.data.forEach(function (element, index) {
 					var model = element._model;
@@ -293,7 +294,7 @@ const chart = new Chart(chartCanvas, {
 						model.rotation = 0; // No rotation
 					}
 				});
-			}
+			},
 		},
 		scales: {
 			y: {
@@ -306,7 +307,7 @@ const chart = new Chart(chartCanvas, {
 				offset: false, // add space to the end of the chart
 			},
 			x: {
-				offset: true, // add space to the end of the chart
+				offset: false, // add space to the end of the chart
 				grid: {
 					display: true,
 					color: "rgba(155, 155, 155, 0.1)",
@@ -397,7 +398,7 @@ function loadSettings() {
 
 	if (settings) {
 		howManyShow = settings.howManyShow;
-		howManySkip = settings.howManySkip + 1;
+		howManySkip = settings.howManySkip;
 		labelAngle = settings.labelAngle;
 
 		inputHowManyShow.value = howManyShow;

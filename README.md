@@ -30,6 +30,10 @@ This project is simple app for EPS to monitor humidity and temperature in the ro
 11. Open `eps.local` in your browser
 12. Enjoy
 
+## Images
+
+![docs/Mobile.png](docs/Mobile.png)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.txt) file for details.
