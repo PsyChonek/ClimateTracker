@@ -1,10 +1,11 @@
 var howManyShow = 0;
 var howManySkip = 0;
 var labelAngle = 0;
+var showDate = false;
 const SECONDS_TO_DISCONNECT = 30;
 
 var inputHowManyShow = document.getElementById("howManyShow");
-inputHowManyShow.addEventListener("change", (e) => {
+inputHowManyShow.addEventListener("input", (e) => {
 	howManyShow = e.target.value;
 	updateChart();
 	storeSettings();
@@ -18,12 +19,12 @@ var dateTo = document.getElementById("dateTo");
 dateFrom.value = new Date().toISOString().split("T")[0];
 dateTo.value = new Date().toISOString().split("T")[0];
 
-dateFrom.addEventListener("change", (e) => {
+dateFrom.addEventListener("input", (e) => {
 	console.log("dateFrom", e.target.value);
 	updateChart();
 });
 
-dateTo.addEventListener("change", (e) => {
+dateTo.addEventListener("input", (e) => {
 	console.log("dateTo", e.target.value);
 	updateChart();
 });
@@ -31,19 +32,19 @@ dateTo.addEventListener("change", (e) => {
 var timeFrom = document.getElementById("timeFrom");
 var timeTo = document.getElementById("timeTo");
 
-timeFrom.addEventListener("change", (e) => {
+timeFrom.addEventListener("input", (e) => {
 	console.log("timeFrom", e.target.value);
 	updateChart();
 });
 
-timeTo.addEventListener("change", (e) => {
+timeTo.addEventListener("input", (e) => {
 	console.log("timeTo", e.target.value);
 	updateChart();
 });
 
 var inputHowManySkip = document.getElementById("howManySkip");
-inputHowManySkip.addEventListener("change", (e) => {
-	howManySkip = e.target.value;
+inputHowManySkip.addEventListener("input", (e) => {
+	howManySkip = e.target.value - 1;
 	updateChart();
 	storeSettings();
 });
@@ -51,7 +52,7 @@ inputHowManySkip.addEventListener("change", (e) => {
 howManySkip = inputHowManySkip.value;
 
 var inputLabelAngle = document.getElementById("labelAngle");
-inputLabelAngle.addEventListener("change", (e) => {
+inputLabelAngle.addEventListener("input", (e) => {
 	labelAngle = e.target.value * -1;
 	chart.options.plugins.datalabels.rotation = labelAngle;
 	updateChart();
@@ -149,6 +150,9 @@ function filterData() {
 	var dateToValue = new Date(dateTo.value);
 	dateToValue = new Date(dateToValue.getTime() + dateToValue.getTimezoneOffset() * 60 * 1000);
 
+	// If more than 24h show date
+	showDate = dateToValue.getTime() - dateFromValue.getTime() >= 24 * 60 * 60 * 1000;
+
 	var timeFromValue = timeFrom.value.split(":");
 	var timeToValue = timeTo.value.split(":");
 
@@ -167,6 +171,8 @@ function filterData() {
 	filteredReadings = filteredReadings.filter((r, index) => {
 		return index % (parseInt(howManySkip) + 1) === 0 || index === filteredReadings.length - 1;
 	});
+
+	showDate = new Date(filteredReadings[filteredReadings.length - 1].timestamp*1000).getDay() != new Date(filteredReadings[0].timestamp*1000).getDay()
 }
 
 // Load only last HOW_MANY_SHOW readings
@@ -182,7 +188,7 @@ function updateChart() {
 
 function addToChart(reading) {
 	// Remove old data
-	if (chart.data.labels.length >= howManyShow) {
+	if (chart.data.labels.length > howManyShow) {
 		// Remove first element
 		chart.data.labels.shift();
 		chart.data.datasets[0].data.shift();
@@ -313,8 +319,9 @@ const chart = new Chart(chartCanvas, {
 	},
 });
 
-// HH:MM - 15:20
+// HH:MM - 15:20 / or if date 15:20 12.12.
 function getDateFormat(date) {
+	if (showDate) return `${date.getDate() < 10 ? "0" : ""}${date.getDate()}.${date.getMonth() + 1 < 10 ? "0" : ""}${date.getMonth() + 1}. ${date.getHours() < 10 ? "0" : ""}${date.getHours()}:${date.getMinutes() < 10 ? "0" : ""}${date.getMinutes()}`;
 	return `${date.getHours() < 10 ? "0" : ""}${date.getHours()}:${date.getMinutes() < 10 ? "0" : ""}${date.getMinutes()}`;
 }
 
@@ -343,7 +350,7 @@ function clearChart() {
 
 function updateDataCount() {
 	if (allReadings.length > 9999) {
-		dataCount.innerHTML = allReadings.length / 1000 + "k";
+		dataCount.innerHTML = (allReadings.length / 1000).toFixed(1) + "k";
 		return;
 	}
 
@@ -351,8 +358,8 @@ function updateDataCount() {
 }
 
 // Load file from /readings.txt and import data
-function loadFromFile() {
-	fetch("/readings.txt")
+function loadFromFile(path = "readings.txt") {
+	fetch(path)
 		.then((response) => response.text())
 		.then((text) => {
 			var data = text.split("\n");
@@ -361,8 +368,7 @@ function loadFromFile() {
 				try {
 					var reading = JSON.parse(d);
 					allReadings.push(reading);
-				}
-				catch (e) {
+				} catch (e) {
 					console.log("Error parsing reading", e);
 					console.log("Reading", d);
 				}
@@ -391,7 +397,7 @@ function loadSettings() {
 
 	if (settings) {
 		howManyShow = settings.howManyShow;
-		howManySkip = settings.howManySkip;
+		howManySkip = settings.howManySkip + 1;
 		labelAngle = settings.labelAngle;
 
 		inputHowManyShow.value = howManyShow;
@@ -403,4 +409,5 @@ function loadSettings() {
 }
 
 loadSettings();
+loadFromFile();
 loadFromFile();
