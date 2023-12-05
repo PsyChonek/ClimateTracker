@@ -54,9 +54,10 @@ h3 {
 	display: flex;
 	flex-direction: row;
 	margin: 10px;
-	width: 100%;
 	justify-content: space-around;
 	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 10px;
 }
 
 .inputNumber {
@@ -68,7 +69,18 @@ h3 {
 	height: 20px;
 	text-align: center;
 	vertical-align: baseline;
-	width: 30px;
+}
+
+.inputText {
+	background-color: black;
+	color: white;
+	border: 1px solid white;
+	border-radius: 5px;
+	padding: 5px;
+	height: 20px;
+	text-align: center;
+	vertical-align: baseline;
+	width: 100px;
 }
 
 .inputContainer {
@@ -76,7 +88,7 @@ h3 {
 	flex-direction: column;
 	justify-content: space-between;
 	gap: 10px;
-	items-align: baseline
+	items-align: baseline;
 }
 
 .datePicker {
@@ -115,11 +127,16 @@ h3 {
 	padding: 5px;
 	height: 20px;
 	text-align: center;
-	font-size: 12px;	
+	font-size: 12px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
+label {
+	text-align: center;
+}
+
 ::-webkit-calendar-picker-indicator {
 	filter: invert(1);
+}

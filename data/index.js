@@ -293,7 +293,7 @@ const chart = new Chart(chartCanvas, {
 						model.rotation = 0; // No rotation
 					}
 				});
-			},
+			}
 		},
 		scales: {
 			y: {
@@ -350,11 +350,11 @@ function clearChart() {
 
 function updateDataCount() {
 	if (allReadings.length > 9999) {
-		dataCount.innerHTML = (allReadings.length / 1000).toFixed(1) + "k";
+		dataCount.value = (allReadings.length / 1000).toFixed(1) + "k";
 		return;
 	}
 
-	dataCount.innerHTML = allReadings.length;
+	dataCount.value = allReadings.length;
 }
 
 // Load file from /readings.txt and import data

@@ -12,7 +12,7 @@ This project is simple app for EPS to monitor humidity and temperature in the ro
 
 ### Requirements
 
-- EPS32
+- EPS
 - Humidity and temperature sensor (DHT11, DHT22, AM2302, AM2321, AM2320, RHT03, Si7021, HTU21D, SHT21)
 
 ### Setup
