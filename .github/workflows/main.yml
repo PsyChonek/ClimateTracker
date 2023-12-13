@@ -1,0 +1,17 @@
+name: Deploy website to pi
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and push docker image
+    runs-on: self-hosted
+    environment: prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run docker build
+        run: docker build -t papu .
