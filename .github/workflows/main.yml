@@ -9,9 +9,15 @@ jobs:
     name: Build and push docker image
     runs-on: self-hosted
     environment: prod
+    defaults:
+      run:
+        working-directory: ./PI
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Run docker build
-        run: docker build -t papu .
+        run: docker build -t climatetracker .
+      
+      - name: Start docker container
+        run: docker run -d -p 80:80 --name climatetracker climatetracker
