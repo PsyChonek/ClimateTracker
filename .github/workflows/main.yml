@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build and push docker image
+    name: Build and run docker image
     runs-on: self-hosted
     environment: prod
     defaults:
@@ -20,4 +20,4 @@ jobs:
         run: docker build -t climatetracker .
       
       - name: Start docker container
-        run: docker run -d -p 80:80 --name climatetracker climatetracker
+        run: docker run -d -p 8080:80 --name climatetracker climatetracker
