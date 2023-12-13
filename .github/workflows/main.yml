@@ -19,5 +19,8 @@ jobs:
       - name: Run docker build
         run: docker build -t climatetracker .
       
+      - name: Stop docker container
+        run: docker stop climatetracker || true
+
       - name: Start docker container
         run: docker run -d --rm -p 8080:80 --name climatetracker climatetracker
