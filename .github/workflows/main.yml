@@ -20,4 +20,4 @@ jobs:
         run: docker build -t climatetracker .
       
       - name: Start docker container
-        run: docker run -d -p 8080:80 --name climatetracker climatetracker
+        run: docker run -d --rm -p 8080:80 --name climatetracker climatetracker
