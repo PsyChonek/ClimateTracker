@@ -33,4 +33,4 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Start docker container
-        run: sudo docker run -d --rm --restart unless-stopped -p 8080:80 --name climatetracker climatetracker
+        run: sudo docker run -d --restart unless-stopped -p 8080:80 --name climatetracker climatetracker
