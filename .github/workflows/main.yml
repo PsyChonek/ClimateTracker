@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build and run docker image
+    name: Build docker image
     runs-on: self-hosted
     environment: prod
     defaults:
@@ -18,9 +18,19 @@ jobs:
 
       - name: Run docker build
         run: sudo docker build -t climatetracker .
-      
+
+  stop:
+    name: Stop docker container
+    needs: build
+    runs-on: self-hosted
+    steps:
       - name: Stop docker container
         run: sudo docker stop climatetracker || true
 
+  start:
+    name: Start docker container
+    needs: stop
+    runs-on: self-hosted
+    steps:
       - name: Start docker container
-        run: sudo docker run -d --rm -p 8080:80 --name climatetracker climatetracker --restart unless-stopped
+        run: sudo docker run -d --rm --restart unless-stopped -p 8080:80 --name climatetracker climatetracker
