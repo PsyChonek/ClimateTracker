@@ -23,4 +23,4 @@ jobs:
         run: docker stop climatetracker || true
 
       - name: Start docker container
-        run: docker run -d --rm -p 8080:80 --name climatetracker climatetracker --restart unless-stopped
+        run: sudo docker run -d --rm -p 8080:80 --name climatetracker climatetracker
