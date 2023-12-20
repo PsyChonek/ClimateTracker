@@ -20,12 +20,15 @@ jobs:
         run: sudo docker build -t climatetracker .
 
   stop:
-    name: Stop docker container
+    name: Stop and remove docker container
     needs: build
     runs-on: self-hosted
     steps:
       - name: Stop docker container
         run: sudo docker stop climatetracker || true
+
+      - name: Remove docker container
+        run: sudo docker rm climatetracker || true
 
   start:
     name: Start docker container
