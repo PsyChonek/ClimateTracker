@@ -1,18 +1,41 @@
-FROM node:latest-alpine
+# Use Node LTS as the base image for development
+FROM node:lts AS development
 
-# Create app directory
-WORKDIR /usr/src/app
+# Set the working directory
+WORKDIR /app
 
-# Install app dependencies
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-RUN npm install
+# Install dev dependencies
+RUN npm Install
 
-# Bundle app source
-COPY . .
+# Use Node LTS as the base image for production
+FROM node:lts AS production
 
-# Expose port 3000
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install production dependencies
+RUN npm install --production
+
+# Use Node Alpine as the final image
+FROM node:alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the built files from the production image
+COPY --from=production /app .
+
+# Copy packges from the production image
+COPY --from=production /app/node_modules ./node_modules
+
+# Expose the port
 EXPOSE 3000
 
-# Run the app
-CMD [ "npm", "server.js" ]
+# Start the application
+CMD ["node", "server.js"]
