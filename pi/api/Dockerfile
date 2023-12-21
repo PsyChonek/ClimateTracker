@@ -1,6 +1,8 @@
 # Use Node LTS as the base image for development
 FROM node:lts AS development
 
+WORKDIR /usr/src/app
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
@@ -10,14 +12,18 @@ RUN npm Install
 # Use Node LTS as the base image for production
 FROM node:lts AS production
 
+WORKDIR /usr/src/app
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
 # Install production dependencies
-RUN npm install --production
+RUN npm install --omit=dev
 
 # Use Node Alpine as the final image
 FROM node:alpine
+
+WORKDIR /usr/src/app
 
 # Copy the built files from the production image
 COPY . .
