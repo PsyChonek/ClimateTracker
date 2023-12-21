@@ -5,10 +5,17 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build docker image
+  stop:
+    name: Stop existing docker containers
     runs-on: self-hosted
-    environment: prod
+    steps:
+      - name: Stop docker containers
+        run: sudo docker-compose down || true
+
+  build_and_start:
+    name: Build and start docker containers
+    needs: stop
+    runs-on: self-hosted
     defaults:
       run:
         working-directory: ./PI
@@ -16,24 +23,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run docker build
-        run: sudo docker build -t climatetracker .
-
-  stop:
-    name: Stop and remove docker container
-    needs: build
-    runs-on: self-hosted
-    steps:
-      - name: Stop docker container
-        run: sudo docker stop climatetracker || true
-
-      - name: Remove docker container
-        run: sudo docker rm climatetracker || true
-
-  start:
-    name: Start docker container
-    needs: stop
-    runs-on: self-hosted
-    steps:
-      - name: Start docker container
-        run: sudo docker run -d --restart unless-stopped -p 8080:80 --name climatetracker climatetracker
+      - name: Build and start docker containers
+        run: sudo docker-compose up --build -d
+      
