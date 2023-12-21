@@ -29,7 +29,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Copy packges from the production image
-COPY --from=production /node_modules ./node_modules
+COPY --from=production /usr/src/app/node_modules ./node_modules
 
 # Expose the port
 EXPOSE 3000
