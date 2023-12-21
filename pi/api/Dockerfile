@@ -23,13 +23,13 @@ COPY package*.json ./
 RUN npm install --production
 
 # Use Node Alpine as the final image
-FROM node:alpine
+FROM node:lts-alpine
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the built files from the production image
-COPY --from=production /app .
+#Copy all files
+COPY . .
 
 # Copy packges from the production image
 COPY --from=production /app/node_modules ./node_modules
