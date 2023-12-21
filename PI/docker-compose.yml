@@ -3,7 +3,7 @@ services:
   web:
     build: ./web
     ports:
-      - 80:80
+      - 8080:80
     depends_on:
       - db
       - api
@@ -14,10 +14,12 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=secret
       - MONGO_INITDB_DATABASE=mydb
+    ports:
+      - 8082:27017
 
   api:
     build: ./api
     ports:
-      - 8080:8080
+      - 8081:3000
     depends_on:
       - db
