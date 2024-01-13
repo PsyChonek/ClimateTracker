@@ -25,4 +25,3 @@ jobs:
 
       - name: Build and start docker containers
         run: sudo docker-compose up --build -d
-      

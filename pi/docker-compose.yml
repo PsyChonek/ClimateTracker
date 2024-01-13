@@ -1,8 +1,6 @@
 version: '3'
 services:
   web:
-    labels: 
-        com.example.description: "ClimateTracker - Web"
     build: ./web
     ports:
       - 8080:80
@@ -11,9 +9,7 @@ services:
       - api
 
   db:
-    labels: 
-      com.example.description: "ClimateTracker - DB"
-    image: arm64v8/mongo:4.4.8
+    build: ./db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=secret
@@ -22,8 +18,6 @@ services:
       - 8082:27017
 
   api:
-    labels: 
-      com.example.description: "ClimateTracker - API"
     build: ./api
     ports:
       - 8081:3000
