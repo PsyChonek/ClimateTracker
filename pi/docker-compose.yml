@@ -1,25 +1,46 @@
 version: '3'
+name: climate-tracker
 services:
   web:
     build: ./web
+    container_name: web
+    networks:
+      - default
     ports:
-      - 8080:80
+      - 9050:80
     depends_on:
       - db
       - api
-
+    develop:
+      watch:
+        - action: sync
+          service: web
+          path: ./web/src
+          target: ./usr/share/nginx/html
   db:
     build: ./db
+    container_name: db
+    networks:
+      - default
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=secret
       - MONGO_INITDB_DATABASE=mydb
     ports:
-      - 8082:27017
-
+      - 9052:27017
   api:
     build: ./api
+    container_name: api
+    networks:
+      - default
     ports:
-      - 8081:3000
+      - 9051:3000
     depends_on:
       - db
+    develop:
+      watch:
+        - action: rebuild
+          path: "./api"
+networks:
+  default:
+    name: climate-tracker

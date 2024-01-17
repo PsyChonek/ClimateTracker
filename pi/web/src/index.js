@@ -66,78 +66,6 @@ var dataCount = document.getElementById("dataCount");
 var allReadings = [];
 var filteredReadings = [];
 
-if (!!window.EventSource) {
-	console.log("Start event source!");
-	var source = new EventSource("/events");
-}
-
-source.addEventListener(
-	"newReading",
-	function (e) {
-		console.log("newReadings ", e.data);
-		newReading(JSON.parse(e.data));
-	},
-	false
-);
-
-var wifiData;
-source.addEventListener(
-	"newWifiStatus",
-	function (e) {
-		console.log("newWifiStatus ", e.data);
-		wifiData = JSON.parse(e.data);
-		wifiData.timeStamp = new Date().getTime();
-	},
-	false
-);
-
-source.addEventListener(
-	"allReadings",
-	function (e) {
-		var data = JSON.parse(e.data);
-		console.log("Readings received", data.data.length);
-		// Add into allReadings if timestamp is not in allReadings
-		data.data.forEach((r) => {
-			if (!allReadings.find((ar) => ar.timestamp === r.timestamp)) {
-				allReadings.push(r);
-			}
-		});
-		orderData();
-		updateChart();
-		updateDataCount();
-	},
-	false
-);
-
-var lastCheckedTimeStamp;
-setInterval(() => {
-	if (!source) return;
-	if (!wifiData) return;
-
-	var lastUpdatedSeconds = (new Date().getTime() - wifiData.timeStamp) / 1000;
-
-	if (lastCheckedTimeStamp === wifiData.timeStamp && lastUpdatedSeconds > SECONDS_TO_DISCONNECT) {
-		console.log("No new data");
-		wifiData.status = "disconnected";
-	}
-
-	lastCheckedTimeStamp = wifiData.timeStamp;
-
-	if (source.readyState === EventSource.CLOSED) {
-		console.log("Reconnect");
-		source = new EventSource("/events");
-		wifiData.status = "disconnected";
-	}
-
-	if (wifiData.status === "connected") {
-		document.getElementById("wifiStatus").innerHTML = "Online" + " " + wifiData.wifiSignalStrength + " RSSI" + " " + lastUpdatedSeconds.toFixed(0) + "s ago";
-		document.getElementById("wifiStatus").style.color = lastUpdatedSeconds > SECONDS_TO_DISCONNECT / 2 ? "orange" : "green";
-	} else {
-		document.getElementById("wifiStatus").innerHTML = "Offline";
-		document.getElementById("wifiStatus").style.color = "red";
-	}
-}, 1000);
-
 function orderData() {
 	filteredReadings.sort((a, b) => {
 		return a.timestamp - b.timestamp;
@@ -409,6 +337,26 @@ function loadSettings() {
 	chart.options.plugins.datalabels.rotation = labelAngle;
 }
 
+function loadFromAPI() {
+	fetch("http://localhost:9051/allReadings")
+		.then((response) => response.json())
+		.then((data) => {
+			for (let i = 0; i < data.length; i++) {
+				var timestamp = new Date(data[i].timestamp).getTime() / 1000;
+				var reading = {
+					temperature: data[i].temperature,
+					humidity: data[i].humidity,
+					timestamp: timestamp,
+				};
+
+				allReadings.push(reading);
+			}
+
+			orderData();
+			updateChart();
+			updateDataCount();
+		});
+}
+
 loadSettings();
-loadFromFile();
-loadFromFile();
+loadFromAPI();
