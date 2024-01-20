@@ -38,7 +38,7 @@ void setup()
   server.begin();
 }
 
-int readingInterval = 10000;
+int readingInterval = 60000;
 int readingCooldown = 0;
 
 int infoInterval = 10000;
@@ -118,8 +118,7 @@ void sendReading(String value)
 
   HTTPClient http;
 
-  Serial.println("[HTTP] begin...");
-  Serial.println("[Server] " + String(API_SERVER) + path);
+  Serial.println("[HTTP] [POST] [Server] " + String(API_SERVER) + path);
 
   http.begin(API_SERVER + path);
   http.addHeader("Content-Type", contentType);

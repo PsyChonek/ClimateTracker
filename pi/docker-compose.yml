@@ -28,6 +28,8 @@ services:
       - MONGO_INITDB_DATABASE=mydb
     ports:
       - 9052:27017
+    volumes:
+      - ./db/data:/data/db
   api:
     build: ./api
     container_name: api
