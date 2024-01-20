@@ -338,7 +338,7 @@ function loadSettings() {
 }
 
 function loadFromAPI() {
-	fetch("http://localhost:9051/allReadings")
+	fetch("http://192.168.0.106:9051/allReadings")
 		.then((response) => response.json())
 		.then((data) => {
 			for (let i = 0; i < data.length; i++) {
