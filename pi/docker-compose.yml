@@ -4,6 +4,7 @@ services:
   web:
     build: ./web
     container_name: web
+    restart: always
     networks:
       - default
     ports:
@@ -14,12 +15,12 @@ services:
     develop:
       watch:
         - action: sync
-          service: web
           path: ./web/src
           target: ./usr/share/nginx/html
   db:
     build: ./db
     container_name: db
+    restart: always
     networks:
       - default
     environment:
@@ -33,6 +34,7 @@ services:
   api:
     build: ./api
     container_name: api
+    restart: always
     networks:
       - default
     ports:
