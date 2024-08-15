@@ -3,6 +3,7 @@ var howManySkip = 0;
 var labelAngle = 0;
 var showDate = false;
 const SECONDS_TO_DISCONNECT = 30;
+const UPDATE_INTERVAL = 60; // 1s
 
 var inputHowManyShow = document.getElementById("howManyShow");
 inputHowManyShow.addEventListener("input", (e) => {
@@ -21,12 +22,14 @@ dateTo.value = new Date().toISOString().split("T")[0];
 
 dateFrom.addEventListener("input", (e) => {
 	console.log("dateFrom", e.target.value);
-	updateChart();
+	clearData();
+	loadFromAPI();
 });
 
 dateTo.addEventListener("input", (e) => {
 	console.log("dateTo", e.target.value);
-	updateChart();
+	clearData();
+	loadFromAPI();
 });
 
 var timeFrom = document.getElementById("timeFrom");
@@ -95,6 +98,8 @@ function filterData() {
 		return r.timestamp * 1000 >= dateTimeFromValue && r.timestamp * 1000 <= dateTimeToValue;
 	});
 
+	if (filteredReadings.length === 0) return;
+
 	if (howManySkip !== "0") {
 		// Filter howManySkip always show first and last
 		filteredReadings = filteredReadings.filter((r, index) => {
@@ -102,7 +107,16 @@ function filterData() {
 		});
 	}
 
-	showDate = new Date(filteredReadings[filteredReadings.length - 1].timestamp * 1000).getDay() != new Date(filteredReadings[0].timestamp * 1000).getDay();
+	try {
+		showDate = new Date(filteredReadings[filteredReadings.length - 1].timestamp * 1000).getDay() != new Date(filteredReadings[0].timestamp * 1000).getDay();
+	}
+	catch (e) {
+		showDate = false;
+		console.log("Error showing date", e);
+		console.log("length", filteredReadings.length);
+		console.log("first", filteredReadings[filteredReadings.length - 1]);
+		console.log("second", filteredReadings[0]);
+	}
 }
 
 // Load only last HOW_MANY_SHOW readings
@@ -338,7 +352,10 @@ function loadSettings() {
 }
 
 function loadFromAPI() {
-	fetch("http://192.168.0.106:9051/allReadings")
+	fetch("http://192.168.0.106:9051/allReadings?fromDate=" + dateFrom.value + "&toDate=" + dateTo.value,
+		{
+			method: "GET"
+		})
 		.then((response) => response.json())
 		.then((data) => {
 			for (let i = 0; i < data.length; i++) {
@@ -348,8 +365,12 @@ function loadFromAPI() {
 					humidity: data[i].humidity,
 					timestamp: timestamp,
 				};
-
-				allReadings.push(reading);
+				
+				// Push only if not contains
+				if (!allReadings.find((r) => r.timestamp === timestamp))
+				{
+					allReadings.push(reading);
+				}
 			}
 
 			orderData();
@@ -360,3 +381,7 @@ function loadFromAPI() {
 
 loadSettings();
 loadFromAPI();
+
+setInterval(() => {
+	loadFromAPI();
+}, UPDATE_INTERVAL * 1000);

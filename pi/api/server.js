@@ -32,9 +32,11 @@ fastify.post("/newReading", async (request, reply) => {
 	return result;
 });
 
-// GET allReadings
+// GET allReadings params: fromDate, toDate
 fastify.get("/allReadings", async (request, reply) => {
-	const result = await readings.find().toArray();
+	const { fromDate, toDate } = request.query;
+	console.log(fromDate, toDate);
+	const result = await readings.find({ timestamp: { $gte: fromDate, $lte: toDate } }).toArray();
 	return result;
 });
 
