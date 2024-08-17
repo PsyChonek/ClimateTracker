@@ -6,4 +6,4 @@ node_modules/
 .vscode/ipch
 
 data/readings.txt
-
+pi/db/data

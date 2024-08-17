@@ -70,7 +70,7 @@ var allReadings = [];
 var filteredReadings = [];
 
 function orderData() {
-	filteredReadings.sort((a, b) => {
+	allReadings.sort((a, b) => {
 		return a.timestamp - b.timestamp;
 	});
 }
@@ -352,6 +352,7 @@ function loadSettings() {
 }
 
 function loadFromAPI() {
+	// fetch("http://localhost:9051/allReadings?fromDate=" + dateFrom.value + "&toDate=" + dateTo.value,
 	fetch("http://192.168.0.106:9051/allReadings?fromDate=" + dateFrom.value + "&toDate=" + dateTo.value,
 		{
 			method: "GET"

@@ -1,9 +1,8 @@
-version: '3'
 name: climate-tracker
 services:
   web:
     build: ./web
-    container_name: web
+    container_name: climate-web
     restart: always
     networks:
       - default
@@ -19,7 +18,7 @@ services:
           target: ./usr/share/nginx/html
   db:
     build: ./db
-    container_name: db
+    container_name: climate-db
     restart: always
     networks:
       - default
@@ -31,9 +30,10 @@ services:
       - 9052:27017
     volumes:
       - /home/vazy/ClimateTracker/db:/data/db
+#      - ./db/data:/data/db
   api:
     build: ./api
-    container_name: api
+    container_name: climate-api
     restart: always
     networks:
       - default
