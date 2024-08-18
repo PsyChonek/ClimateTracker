@@ -27,9 +27,12 @@ const readings = db.collection("readings");
 fastify.post("/newReading", async (request, reply) => {
 	const { sensorID, temperature, humidity, timestamp } = request.body;		
 
-	console.log(sensorID, temperature, humidity, timestamp);
+	console.log("sensorID: ", sensorID, "temperature: ", temperature, "humidity: ", humidity, "timestamp: ", timestamp);
 
-	let timestampNew = timestamp || new Date().toISOString();
+	let timestampNew = timestamp ? new Date(parseInt(timestamp)) : new Date().toISOString();
+
+	console.log("timestampNew: ", timestampNew);
+
 	const newReading = { sensorID, temperature, humidity, timestamp : timestampNew };
 	const result = await readings.insertOne(newReading);
 	return result;
