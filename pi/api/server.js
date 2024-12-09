@@ -47,7 +47,7 @@ fastify.post("/newReading", async (request, reply) => {
 fastify.get("/allReadings", async (request, reply) => {
 	const { fromDate, toDate } = request.query;
 	console.log(fromDate, toDate);
-	const result = await readings.find().toArray();
+	const result = await readings.find({ timestamp: { $gte: new Date(fromDate), $lt: new Date(toDate) } }).toArray();
 	return result;
 });
 
