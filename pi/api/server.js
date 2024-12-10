@@ -43,31 +43,32 @@ fastify.post("/newReading", async (request, reply) => {
 	return result;
 });
 
-// GET allReadings params: fromDate, toDate
 fastify.get("/allReadings", async (request, reply) => {
-	const { fromDate, toDate } = request.query;
-	console.log(fromDate, toDate);
+    const { fromDate, toDate } = request.query;
 
-	/* example of data in db
-	{
-	sensorID: undefined,
-	temperature: 23.79999924,
-	humidity: 65,
-	timestamp: 1733853864,
-	timestampNew: '2024-12-10T18:04:24.000Z'
-	}
-	*/
+    // Validate and parse dates
+    const isValidDate = (date) => !isNaN(new Date(date).getTime());
+    const startDate = fromDate && isValidDate(fromDate) ? new Date(fromDate) : new Date(0);
+    const endDate = toDate && isValidDate(toDate) 
+        ? new Date(new Date(toDate).setHours(23, 59, 59, 999)) 
+        : new Date();
 
-	// Filter by date
-	const result = await readings.find({
-		timestampNew: {
-			$gte: fromDate ? new Date(fromDate) : new Date(0),
-			$lte: toDate ? new Date(toDate) : new Date(),
-		},
-	}).toArray();
+    console.log("Query Dates:", { startDate, endDate });
 
+    try {
+        // Filter by date
+        const result = await readings.find({
+            timestampNew: {
+                $gte: startDate,
+                $lte: endDate,
+            },
+        }).toArray();
 
-	return result;
+        return result;
+    } catch (error) {
+        console.error("Error querying MongoDB:", error);
+        reply.code(500).send({ error: "Failed to fetch readings." });
+    }
 });
 
 /**
