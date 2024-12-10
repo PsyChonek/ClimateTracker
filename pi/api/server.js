@@ -65,7 +65,7 @@ fastify.get("/allReadings", async (request, reply) => {
         const result = await readings.find({
             timestamp: {
                 $gte: ISODate(startDate),
-                $lte: ISODate(endDate),
+                $lt: ISODate(endDate),
             },
         }).toArray();
 
