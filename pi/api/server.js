@@ -63,7 +63,7 @@ fastify.get("/allReadings", async (request, reply) => {
     try {
         // Filter by date
         const result = await readings.find({
-            timestampNew: {
+            timestamp: {
                 $gte: startDate,
                 $lte: endDate,
             },
