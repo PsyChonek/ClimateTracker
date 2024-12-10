@@ -23,11 +23,9 @@ console.log(`Connecting to ${HOST}:${PORT}`);
 const db = await connect(PORT, HOST, USER, PASSWORD, DATABASE);
 const readings = db.collection("readings");
 
-// POST newReading
 fastify.get("/allReadings", async (request, reply) => {
     const { fromDate, toDate } = request.query;
 
-    // Validate and parse dates
     const isValidDate = (date) => !isNaN(new Date(date).getTime());
     const startDate = fromDate && isValidDate(fromDate) ? new Date(fromDate) : new Date(0);
     const endDate = toDate && isValidDate(toDate) 
@@ -37,14 +35,12 @@ fastify.get("/allReadings", async (request, reply) => {
     console.log("Raw Input Dates:", { fromDate, toDate });
     console.log("Parsed Query Dates:", { startDate, endDate });
 
-    if (!isValidDate(fromDate) || !isValidDate(toDate) || startDate > endDate) {
-        console.log("Invalid Dates. Returning all readings.");
-        const result = await readings.find().toArray();
-        return result;
-    }
-
     try {
-        // Filter by date using `new Date()`
+        // Log all readings to inspect database content
+        const allReadings = await readings.find().toArray();
+        console.log("All Readings:", allReadings);
+
+        // Perform the query
         const result = await readings.find({
             timestamp: {
                 $gte: startDate,
@@ -59,6 +55,7 @@ fastify.get("/allReadings", async (request, reply) => {
         reply.code(500).send({ error: "Failed to fetch readings." });
     }
 });
+
 
 /**
  * Run the server!
