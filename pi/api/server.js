@@ -24,25 +24,6 @@ const db = await connect(PORT, HOST, USER, PASSWORD, DATABASE);
 const readings = db.collection("readings");
 
 // POST newReading
-fastify.post("/newReading", async (request, reply) => {
-	const { sensorID, temperature, humidity, timestamp } = request.body;		
-
-	let timestampNew = timestamp ? new Date(parseInt(timestamp)*1000).toISOString() : new Date().toISOString();
-
-	var log = {
-		sensorID: sensorID,
-		temperature: temperature,
-		humidity: humidity,
-		timestamp: timestamp,
-		timestampNew: timestampNew
-	};
-	console.log(log);
-
-	const newReading = { sensorID, temperature, humidity, timestamp : timestampNew };
-	const result = await readings.insertOne(newReading);
-	return result;
-});
-
 fastify.get("/allReadings", async (request, reply) => {
     const { fromDate, toDate } = request.query;
 
@@ -53,22 +34,25 @@ fastify.get("/allReadings", async (request, reply) => {
         ? new Date(new Date(toDate).setHours(23, 59, 59, 999)) 
         : new Date();
 
-    console.log("Query Dates:", { startDate, endDate });
+    console.log("Raw Input Dates:", { fromDate, toDate });
+    console.log("Parsed Query Dates:", { startDate, endDate });
 
-	if (!isValidDate(fromDate) || !isValidDate(toDate) || startDate > endDate) {
-		const result = await readings.find().toArray();
-		return result;
-	}
+    if (!isValidDate(fromDate) || !isValidDate(toDate) || startDate > endDate) {
+        console.log("Invalid Dates. Returning all readings.");
+        const result = await readings.find().toArray();
+        return result;
+    }
 
     try {
-        // Filter by date
+        // Filter by date using `new Date()`
         const result = await readings.find({
             timestamp: {
-                $gte: new ISODate(startDate),
-                $lte: new ISODate(endDate),
+                $gte: startDate,
+                $lte: endDate,
             },
         }).toArray();
 
+        console.log("Query Results:", result);
         return result;
     } catch (error) {
         console.error("Error querying MongoDB:", error);
