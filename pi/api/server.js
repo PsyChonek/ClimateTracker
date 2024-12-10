@@ -55,6 +55,11 @@ fastify.get("/allReadings", async (request, reply) => {
 
     console.log("Query Dates:", { startDate, endDate });
 
+	if (!isValidDate(fromDate) || !isValidDate(toDate) || startDate > endDate) {
+		const result = await readings.find().toArray();
+		return result;
+	}
+
     try {
         // Filter by date
         const result = await readings.find({
