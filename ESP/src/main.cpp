@@ -12,7 +12,7 @@
 #define DHTTYPE DHT11
 #define DHTPIN 13
 
-#define API_SERVER "http://192.168.0.106:9051"
+#define API_SERVER "http://192.168.0.108:9051"
 
 AsyncWebServer server(80);
 StaticJsonDocument<64> reading;

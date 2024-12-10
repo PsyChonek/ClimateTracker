@@ -47,7 +47,26 @@ fastify.post("/newReading", async (request, reply) => {
 fastify.get("/allReadings", async (request, reply) => {
 	const { fromDate, toDate } = request.query;
 	console.log(fromDate, toDate);
-	const result = await readings.find({ timestamp: { $gte: new Date(fromDate), $lt: new Date(toDate) } }).toArray();
+
+	/* example of data in db
+	{
+	sensorID: undefined,
+	temperature: 23.79999924,
+	humidity: 65,
+	timestamp: 1733853864,
+	timestampNew: '2024-12-10T18:04:24.000Z'
+	}
+	*/
+
+	// Filter by date
+	const result = await readings.find({
+		timestampNew: {
+			$gte: fromDate ? new Date(fromDate) : new Date(0),
+			$lte: toDate ? new Date(toDate) : new Date(),
+		},
+	}).toArray();
+
+
 	return result;
 });
 
