@@ -12,13 +12,16 @@
 #define DHTTYPE DHT11
 #define DHTPIN 13
 
-#define API_SERVER "http://192.168.0.108:9051"
+#define API_SERVER "http://localhost:9051"
 
 AsyncWebServer server(80);
 StaticJsonDocument<64> reading;
-StaticJsonDocument<64> wifiStatus;
+StaticJsonDocument<64> status;
 
 DHT dht(DHTPIN, DHTTYPE);
+
+// Variable sensorID to store the sensor ID
+String sensorID;
 
 void connectToWifi();
 void setUpTime();
@@ -30,12 +33,47 @@ String readReading();
 void sendReading(String value);
 void sendInfo();
 
+
 void setup()
 {
   Serial.begin(115200);
   dht.begin();
   connectToWifi();
   server.begin();
+
+  // Generate a random sensorID and store it in the SPIFFS file system if already exists read it
+  if (!SPIFFS.begin(true))
+  {
+    Serial.println("An Error has occurred while mounting SPIFFS");
+  }
+  else
+  {
+    File file = SPIFFS.open("/sensorID.txt", "r");
+    if (!file)
+    {
+      Serial.println("Failed to open file for reading");
+
+      file = SPIFFS.open("/sensorID.txt", "w");
+      if (!file)
+      {
+        Serial.println("Failed to open file for writing");
+      }
+      else
+      {
+        sensorID = String(random(1000, 9999));
+        Serial.println("Sensor ID: " + sensorID);
+
+        file.print(sensorID);     
+      }
+    }
+
+    sensorID = file.readString();
+    Serial.println("Sensor ID: " + sensorID);
+
+    file.close();
+  }
+
+  sendInfo();
 }
 
 int readingInterval = 60000;
@@ -93,20 +131,30 @@ void connectToWifi()
 
 String readReading()
 {
-  return getValuesJSON(dht.readTemperature(), dht.readHumidity(), time(&now));
+  return getValuesJSON(dht.readTemperature(), dht.readHumidity(), time(&now), sensorID);
 }
 
-// TODO
 void sendInfo()
 {
-  String status = WiFi.status() == WL_CONNECTED ? "connected" : "disconnected";
-  int wifiSignalStrength = WiFi.RSSI();
-
-  wifiStatus["status"] = status;
-  wifiStatus["wifiSignalStrength"] = wifiSignalStrength;
+  status["sensorID"] = sensorID;
 
   String values;
   serializeJson(wifiStatus, values);
+  
+  Serial.println("making POST request");
+
+  String path = "/addSensor";
+
+  HTTPClient http;
+
+  Serial.println("[HTTP] [POST] [Server] " + String(API_SERVER) + path);
+
+  http.begin(API_SERVER + path);
+  http.addHeader("Content-Type", "application/json");
+
+  int statusCode = http.POST(values);
+  Serial.print("Status code: ");
+  Serial.println(statusCode);
 }
 
 void sendReading(String value)
@@ -129,7 +177,7 @@ void sendReading(String value)
 }
 
 // Send values to web page
-String getValuesJSON(float temperature, float humidity, int timestamp = 0)
+String getValuesJSON(float temperature, float humidity, int timestamp = 0, String sensorID = "")
 {
   if (isnan(temperature) || isnan(humidity))
   {
@@ -141,6 +189,7 @@ String getValuesJSON(float temperature, float humidity, int timestamp = 0)
   reading["temperature"] = temperature;
   reading["humidity"] = humidity;
   reading["timestamp"] = timestamp;
+  reading["sensorID"] = sensorID;
 
   String values;
   serializeJson(reading, values);
