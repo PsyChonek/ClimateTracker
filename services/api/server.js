@@ -117,8 +117,8 @@ fastify.get(
 			querystring: {
 				type: "object",
 				properties: {
-					fromDate: { type: "string", format: "date-time", description: "Start date for the range." },
-					toDate: { type: "string", format: "date-time", description: "End date for the range." },
+					fromDate: { type: "string", format: "date", description: "Start date for the range." },
+					toDate: { type: "string", format: "date", description: "End date for the range." },
 				},
 			},
 			response: {

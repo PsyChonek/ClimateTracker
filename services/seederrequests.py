@@ -55,7 +55,7 @@ if __name__ == "__main__":
     fromDate = datetime.now() - timedelta(days=7)
     toDate = datetime.now()
     perDay = 100
-    sensorID = "sensor-001"
+    sensorID = "sensor-006"
     apiIP = "localhost:9051"  # Replace with your actual API IP
     
     generate_readings(fromDate, toDate, perDay, sensorID, apiIP)
