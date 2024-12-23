@@ -4,6 +4,3 @@ node_modules/
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
-
-data/readings.txt
-pi/db/data
