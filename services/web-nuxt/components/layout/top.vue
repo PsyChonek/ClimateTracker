@@ -1,13 +1,13 @@
 <template>
-	<div class="top">
-		<h1 class="title">Climate Tracker</h1>
+	<div class="flex flex-col justify-between items-center p-2 px-8 bg-black">
+		<h1 class="text-white text-xl font-bold whitespace-nowrap">Climate Tracker</h1>
 		<SensorItems :items="items" />
 	</div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import SensorItems from './SensorItems.vue';
+import SensorItems from '../SensorItems.vue';
 
 const items = ref([]);
 
@@ -25,25 +25,3 @@ onMounted(() => {
 	];
 });
 </script>
-
-<style scoped>
-.top {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0.5rem;
-	padding-left: 2rem;
-	padding-right: 2rem;
-	background-color: black;
-	flex-direction: column;
-}
-
-.title {
-	font-size: 1.5rem;
-	font-weight: bold;
-	color: white;
-	word-wrap: none;
-	word-break: keep-all;
-	white-space: nowrap;
-}
-</style>

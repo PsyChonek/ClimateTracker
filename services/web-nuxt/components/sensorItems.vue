@@ -1,7 +1,7 @@
 <template>
-	<div class="grid-container">
+	<div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] justify-items-center gap-4 w-full p-4">
 		<slot v-for="(item, index) in items" :key="index" :item="item">
-			<div class="grid-item">
+			<div class="flex justify-center items-center p-2 border border-gray-300">
 				<p>{{ item.name }} - {{ item.status }}</p>
 			</div>
 		</slot>
@@ -18,23 +18,3 @@ defineProps({
 	},
 });
 </script>
-
-<style scoped>
-.grid-container {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-	justify-items: center;
-	gap: 16px;
-	width: 100%;
-	padding: 16px;
-}
-
-.grid-item {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 10px;
-	border: 1px solid #ccc;
-	box-sizing: border-box;
-}
-</style>

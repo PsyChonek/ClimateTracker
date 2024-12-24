@@ -1,12 +1,12 @@
 <template>
-	<div class="mid">
-		<SensorChart :chart-data="chartData" :chart-options="chartOptions" />
+	<div class="flex-1 p-4 flex flex-col justify-center items-center">
+		<SensorChart class="w-4/5 max-h-[50vh] text-center flex flex-col items-center mx-auto" :chart-data="chartData" :chart-options="chartOptions" />
 	</div>
 </template>
 
 <script setup>
 import { reactive } from 'vue';
-import SensorChart from './SensorChart.vue';
+import SensorChart from '../SensorChart.vue';
 
 // Reactive chart data and options
 const chartData = reactive({
@@ -41,14 +41,3 @@ const chartOptions = reactive({
 	maintainAspectRatio: true,
 });
 </script>
-
-<style scoped>
-.mid {
-	flex: 1;
-	padding: 1rem;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-}
-</style>

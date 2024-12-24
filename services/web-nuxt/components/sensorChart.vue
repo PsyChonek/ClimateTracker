@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Bar :data="chartData" :options="chartOptions" />
+		<Bar :data="chartData" :options="chartOptions"/>
 	</div>
 </template>
 
@@ -15,10 +15,7 @@ defineProps({
 	},
 	chartOptions: {
 		type: Object,
-		default: () => ({
-			responsive: true,
-			maintainAspectRatio: false,
-		}),
+		required: true,
 	},
 });
 </script>

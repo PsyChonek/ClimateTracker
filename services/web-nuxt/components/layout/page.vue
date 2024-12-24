@@ -1,21 +1,13 @@
 <template>
-	<div class="layout">
-		<LayoutTop />
-		<LayoutMid />
-		<LayoutBot />
+	<div class="flex flex-col min-h-screen">
+		<Top />
+		<Mid />
+		<Bot />
 	</div>
 </template>
 
 <script setup>
-import LayoutTop from './LayoutTop.vue';
-import LayoutMid from './LayoutMid.vue';
-import LayoutBot from './LayoutBot.vue';
+import Top from './Top.vue';
+import Mid from './Mid.vue';
+import Bot from './Bot.vue';
 </script>
-
-<style scoped>
-.layout {
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
-}
-</style>
