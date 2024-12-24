@@ -1,8 +1,8 @@
 <template>
     <div class="layout">
-        <LayoutHeader/>
-        <LayoutMain/>
-        <LayoutFooter/>
+        <LayoutTop/>
+        <LayoutMid/>
+        <LayoutBot/>
     </div>
 </template>
 
@@ -13,11 +13,9 @@ export default {
 </script>
 
 <style scoped>
-/* Base layout styling */
 .layout {
     display: flex;
     flex-direction: column;
-    /* Ensure page height covers the viewport */
     min-height: 100vh;
 }
 </style>

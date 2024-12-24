@@ -1,30 +1,31 @@
 <template>
-    <footer class="footer">
+    <div class="bot">
         <div class="content has-text-centered">
             <p>
-                &copy; Daniel Vazač. Check out my GitHub: 
+                &copy; Daniel Vazač. Check out my GitHub:
                 <a href="https://github.com/PsyChonek" target="_blank">PsyChonek</a>
             </p>
         </div>
-    </footer>
+    </div>
 </template>
 
 <script>
 export default {
-    name: 'Footer'
+    name: 'Bot'
 }
 </script>
 
 <style scoped>
-
-/* Footer styling */
-.footer {
+.bot {
     color: white;
     text-align: center;
-    padding: 0.25rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.footer a {
+.bot a {
     color: white;
     text-decoration: underline;
 }

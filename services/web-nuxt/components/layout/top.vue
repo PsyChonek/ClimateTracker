@@ -1,24 +1,21 @@
 <template>
-    <div class="header">
+    <div class="top">
         <h1 class="title">Climate Tracker</h1>
-        <CommonFlexCenterStartList :items="items">
-            <template v-slot:default="slotProps">
-                <SensorItem :item="slotProps.item"/>
-            </template>
-        </CommonFlexCenterStartList>
+        <SensorItems :items="items"/>    
     </div>
 </template>
 
 <script>
 
 export default {
-    name: 'Header',
+    name: 'Top',
     data() {
         return {
             items: []
         }
     },
     mounted() {
+        
         const generatedItems = [
             { name: 'Sensor A', status: 'active' },
             { name: 'Sensor B', status: 'inactive' },
@@ -37,7 +34,7 @@ export default {
 </script>
 
 <style scoped>
-.header {
+.top {
     display: flex;
     justify-content: space-between;
     align-items: center;

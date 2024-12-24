@@ -4,5 +4,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   typescript: {
     typeCheck: true
-  }
+  },
+  modules: [
+    '@pinia/nuxt',
+    '@nuxtjs/tailwindcss',
+    '@formkit/auto-animate',
+    '@nuxtjs/eslint-module'
+  ],
 })
