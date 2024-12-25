@@ -1,5 +1,19 @@
 name: climate-tracker
 services:
+  web-nuxt:
+    build: ./web-nuxt
+    container_name: climate-web-nuxt
+    restart: always
+    networks:
+      - default
+    ports:
+      - 9050:3000
+    depends_on:
+      - api
+    develop:
+      watch:
+        - action: rebuild
+          path: ./web-nuxt
   web:
     build: ./web
     container_name: climate-web
@@ -9,7 +23,6 @@ services:
     ports:
       - 80:80
     depends_on:
-      - db
       - api
     develop:
       watch:
