@@ -1,6 +1,10 @@
 <template>
 	<div class="flex-1 p-4 flex flex-col justify-center items-center">
-		<SensorChart class="w-[90vw] max-h-[70vh] text-center flex flex-col items-center mx-auto" :chart-data="chartData" :chart-options="chartOptions" />
+		<SensorChart
+			class="w-[90vw] max-h-[70vh] text-center flex flex-col items-center mx-auto"
+			:chart-data="chartData"
+			:chart-options="chartOptions"
+		/>
 	</div>
 </template>
 
@@ -40,6 +44,4 @@ const chartOptions = reactive({
 	responsive: true,
 	maintainAspectRatio: true,
 });
-
-
 </script>

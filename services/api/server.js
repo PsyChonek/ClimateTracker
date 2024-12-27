@@ -177,9 +177,9 @@ fastify.post(
 				type: "object",
 				properties: {
 					ip: { type: "string", format: "ipv4", description: "IP address of the sensor." },
-					port: { type: "number", description: "Port number of the sensor." },
+					espId: { type: "string", description: "Unique ID of the sensor." },
 				},
-				required: ["ip", "port"],
+				required: ["ip",],
 			},
 			response: {
 				200: {
@@ -193,10 +193,10 @@ fastify.post(
 		},
 	},
 	async (request, reply) => {
-		const { ip, port } = request.body;
-		const sensorID = request.query.sensorID;
+		const { ip } = request.body;
+		const espId = request.query.espId;
 
-		const newSensor = { ip, port, sensorID };
+		const newSensor = { ip, espId };
 		const result = await sensors.insertOne(newSensor);
 		return result;
 	}
