@@ -58,6 +58,7 @@ console.log(`Connecting to ${HOST}:${PORT}`);
 
 const db = await connect(PORT, HOST, USER, PASSWORD, DATABASE);
 const readings = db.collection("readings");
+const sensors = db.collection("sensors");
 
 // POST newReading
 fastify.post(

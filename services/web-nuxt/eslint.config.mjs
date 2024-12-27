@@ -5,8 +5,8 @@ export default createConfigForNuxt({
 	plugins: ['prettier'],
 	extends: ['plugin:prettier/recommended'],
 	rules: {
-		// Add Prettier-specific rules
 		'prettier/prettier': 'error',
-		// Optional: Customize other rules if needed
 	},
+}).prepend({
+	ignores: ['clients/**'],
 });

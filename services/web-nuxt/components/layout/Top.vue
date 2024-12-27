@@ -6,17 +6,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import SensorItems from '../SensorItems.vue';
-
 const items = ref([]);
 
-onMounted(() => {
-	items.value = [
-		{ name: 'Sensor A', status: 'active' },
-		{ name: 'Sensor B', status: 'inactive' },
-		{ name: 'Sensor C', status: 'active' },
-		{ name: 'Sensor D', status: 'active' }
-	];
+onServerPrefetch(async () => {
+	const { $sensorsApi } = useNuxtApp(); // Access the injected client
+	$sensorsApi.allSensorsGet((err, data) => {
+		if (err) {
+			console.error('Error fetching sensors:', err);
+			return;
+		}
+		console.log('Fetched sensors:', data);
+	});
 });
 </script>
