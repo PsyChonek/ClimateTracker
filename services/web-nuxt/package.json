@@ -11,12 +11,13 @@
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"format": "prettier --write .",
-		"generate-api-client": "openapi-generator-cli generate -i http://localhost:9051/documentation/json -g typescript-axios -o clients/api"
+		"generate-api-client": "openapi-generator-cli generate -i http://localhost:9051/documentation/json -g typescript-axios -o clients/api && npm run format"
 	},
 	"dependencies": {
 		"axios": "^1.7.9",
 		"chart.js": "^4.4.7",
 		"nuxt": "^3.14.1592",
+		"pinia": "^2.3.0",
 		"vue": "latest",
 		"vue-chartjs": "^5.3.2",
 		"vue-router": "latest"
@@ -33,5 +34,8 @@
 		"prettier": "^3.4.2",
 		"typescript": "^5.7.2",
 		"vue-tsc": "^2.1.10"
+	},
+	"overrides": {
+		"vue": "latest"
 	}
 }

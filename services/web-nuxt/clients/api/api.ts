@@ -113,19 +113,37 @@ export interface AllSensorsGet200ResponseInner {
 	 * @type {string}
 	 * @memberof AllSensorsGet200ResponseInner
 	 */
-	ip?: string;
-	/**
-	 *
-	 * @type {number}
-	 * @memberof AllSensorsGet200ResponseInner
-	 */
-	port?: number;
+	_id?: string;
 	/**
 	 *
 	 * @type {string}
 	 * @memberof AllSensorsGet200ResponseInner
 	 */
-	sensorID?: string;
+	ip?: string;
+	/**
+	 *
+	 * @type {string}
+	 * @memberof AllSensorsGet200ResponseInner
+	 */
+	espId?: string;
+	/**
+	 *
+	 * @type {string}
+	 * @memberof AllSensorsGet200ResponseInner
+	 */
+	displayName?: string;
+	/**
+	 *
+	 * @type {number}
+	 * @memberof AllSensorsGet200ResponseInner
+	 */
+	temperatureOffset?: number;
+	/**
+	 *
+	 * @type {number}
+	 * @memberof AllSensorsGet200ResponseInner
+	 */
+	humidityOffset?: number;
 }
 /**
  * Reading successfully added.
@@ -191,13 +209,19 @@ export interface SensorPatch200Response {
  */
 export interface SensorPatchRequest {
 	/**
+	 * Unique ID
+	 * @type {string}
+	 * @memberof SensorPatchRequest
+	 */
+	_id?: string;
+	/**
 	 * Unique ID of the sensor.
 	 * @type {string}
 	 * @memberof SensorPatchRequest
 	 */
-	sensorID: string;
+	espId?: string;
 	/**
-	 * Display name for the sensor.
+	 * Display name of the sensor.
 	 * @type {string}
 	 * @memberof SensorPatchRequest
 	 */

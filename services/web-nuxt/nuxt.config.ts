@@ -7,12 +7,11 @@ export default defineNuxtConfig({
 		typeCheck: true,
 	},
 	modules: [
-		'@pinia/nuxt',
 		'@nuxtjs/tailwindcss',
 		'@formkit/auto-animate',
 		'@nuxtjs/eslint-module',
 	],
-	plugins: ['~/plugins/api.server'],
+	plugins: ['~/plugins/api.server', '~/plugins/pinia'],
 	runtimeConfig: {
 		apiBaseUrl: process.env.API_BASE_URL,
 	},

@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { Bar } from 'vue-chartjs';
 
 defineProps({

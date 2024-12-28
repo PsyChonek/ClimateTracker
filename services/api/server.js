@@ -179,7 +179,7 @@ fastify.post(
 					ip: { type: "string", format: "ipv4", description: "IP address of the sensor." },
 					espId: { type: "string", description: "Unique ID of the sensor." },
 				},
-				required: ["ip",],
+				required: ["ip"],
 			},
 			response: {
 				200: {
@@ -193,10 +193,15 @@ fastify.post(
 		},
 	},
 	async (request, reply) => {
-		const { ip } = request.body;
-		const espId = request.query.espId;
-
+		const { ip, espId } = request.body;
 		const newSensor = { ip, espId };
+
+		// Check if same sensor already exists
+		const existingSensor = await sensors.findOne({ ip });
+		if (existingSensor) {
+			reply.code(400).send({ error: "Sensor already exists." });
+		}
+
 		const result = await sensors.insertOne(newSensor);
 		return result;
 	}
@@ -217,9 +222,12 @@ fastify.get(
 					items: {
 						type: "object",
 						properties: {
+							_id: { type: "string" },
 							ip: { type: "string" },
-							port: { type: "number" },
-							sensorID: { type: "string" },
+							espId: { type: "string" },
+							displayName: { type: "string" },
+							temperatureOffset: { type: "number" },
+							humidityOffset: { type: "number" },
 						},
 					},
 				},
@@ -227,7 +235,8 @@ fastify.get(
 		},
 	},
 	async (request, reply) => {
-		const result = await sensors.find({}).toArray();
+		// Include _ID
+		const result = await sensors.find().toArray();
 		return result;
 	}
 );
@@ -243,8 +252,9 @@ fastify.patch(
 			body: {
 				type: "object",
 				properties: {
-					sensorID: { type: "string", description: "Unique ID of the sensor." },
-					displayName: { type: "string", description: "Display name for the sensor." },
+					_id: { type: "string", description: "Unique ID" },
+					espId: { type: "string", description: "Unique ID of the sensor." },
+					displayName: { type: "string", description: "Display name of the sensor." },
 					temperatureOffset: { type: "number", description: "Temperature offset value." },
 					humidityOffset: { type: "number", description: "Humidity offset value." },
 				},
@@ -262,16 +272,17 @@ fastify.patch(
 		},
 	},
 	async (request, reply) => {
-		const { sensorID, displayName, temperatureOffset, humidityOffset } = request.body;
+		const { id: _id, espId, displayName, temperatureOffset, humidityOffset } = request.body;
 		const result = await sensors.update
 			.findOne({
-				sensorID: sensorID,
+				_id: _id,
 			})
 			.updateOne({
 				$set: {
 					displayName: displayName,
 					temperatureOffset: temperatureOffset,
 					humidityOffset: humidityOffset,
+					espId: espId,
 				},
 			});
 		return result;
