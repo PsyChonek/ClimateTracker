@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import Top from './Top.vue';
-import Mid from './Mid.vue';
-import Bot from './Bot.vue';
+import Top from './top.vue';
+import Mid from './mid.vue';
+import Bot from './bot.vue';
 </script>

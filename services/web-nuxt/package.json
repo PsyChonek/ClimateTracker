@@ -14,10 +14,11 @@
 		"generate-api-client": "openapi-generator-cli generate -i http://localhost:9051/documentation/json -g typescript-axios -o clients/api && npm run format"
 	},
 	"dependencies": {
+		"@vue/composition-api": "^1.7.2",
 		"axios": "^1.7.9",
 		"chart.js": "^4.4.7",
 		"nuxt": "^3.14.1592",
-		"pinia": "^2.3.0",
+		"pinia": "^2.3.1",
 		"vue": "latest",
 		"vue-chartjs": "^5.3.2",
 		"vue-router": "latest"

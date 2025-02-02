@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import SensorChart from '../SensorChart.vue';
+import SensorChart from '../sensorChart.vue';
 
 // Reactive chart data and options
 const chartData = reactive({
