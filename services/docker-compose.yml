@@ -14,6 +14,8 @@ services:
       watch:
         - action: rebuild
           path: ./web-nuxt
+    environment:
+      - NUXT_PUBLIC_API_BASE_URL=https://api:3000
   web:
     build: ./web
     container_name: climate-web

@@ -2,15 +2,12 @@ import { defineNuxtPlugin } from '#app';
 import { SensorsApi, ReadingsApi, Configuration } from '@/clients/api'; // Use an absolute path starting with @
 
 export default defineNuxtPlugin((nuxtApp) => {
+	const configEnv = useRuntimeConfig();
+
 	// Set up the API client configuration
 	const config = new Configuration({
-		basePath: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:9051', // Base URL for your API
-		// accessToken: () => {
-		//   // Optionally inject a token if needed
-		//   const token = localStorage.getItem('auth_token');
-		//   return token || '';
-		// },
-	});
+		basePath: configEnv.public.apiBaseUrl, // Base URL for your API
+	  });
 
 	// Create an instance of the API client
 	const sensorsApi = new SensorsApi(config);

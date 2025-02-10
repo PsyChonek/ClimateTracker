@@ -108,6 +108,7 @@ fastify.post(
 	}
 );
 
+// GET allReadings, readings request api to get all readings from the database
 fastify.get(
 	"/allReadings",
 	{
@@ -235,8 +236,11 @@ fastify.get(
 		},
 	},
 	async (request, reply) => {
-		// Include _ID
+		console.log("Getting all sensors");
+
 		const result = await sensors.find().toArray();
+
+		console.log(result);
 		return result;
 	}
 );
