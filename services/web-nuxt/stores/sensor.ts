@@ -23,5 +23,8 @@ export const useSensorStore = defineStore('sensor', {
 		deselectAllSensors() {
 			this.sensors.forEach((sensor) => (sensor.selected = false));
 		},
+		getSensorById(id: string): Sensor | undefined {
+			return this.sensors.find((sensor) => sensor._id === id);
+		},
 	},
 });
