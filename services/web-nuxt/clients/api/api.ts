@@ -113,7 +113,7 @@ export interface AllSensorsGet200ResponseInner {
 	 * @type {string}
 	 * @memberof AllSensorsGet200ResponseInner
 	 */
-	_id?: string;
+	id?: string;
 	/**
 	 *
 	 * @type {string}
@@ -213,7 +213,7 @@ export interface SensorPatchRequest {
 	 * @type {string}
 	 * @memberof SensorPatchRequest
 	 */
-	_id?: string;
+	id?: string;
 	/**
 	 * Unique ID of the sensor.
 	 * @type {string}

@@ -2,9 +2,12 @@
 	<div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] justify-items-center gap-4 w-full p-4">
 		<slot v-for="(item, index) in sensorStore.sensors" :key="index" :item="item">
 			<button :class="{ 'bg-purple-950': item.selected }" class="flex justify-center items-center p-2 border border-gray-300 w-[180px]" @click="sensorClick(item)">
-				<p>{{ item.displayName || item.ip }}</p>
+				<p>{{ item.displayName || item.espID }}</p>
 			</button>
 		</slot>
+
+		<!-- Show warning if API not available -->
+		<div v-if="error" class="text-red-500">Error fetching sensors</div>
 	</div>
 </template>
 
@@ -29,13 +32,13 @@ const sensorClick = (sensor) => {
 	const selectedSensor = sensorStore.sensors.find((s) => s.selected);
 
 	// If the clicked sensor is already selected, do nothing
-	if (selectedSensor && selectedSensor._id === sensor._id) {
+	if (selectedSensor && selectedSensor.id === sensor.id) {
 		return;
 	}
 
 	sensorStore.deselectAllSensors();
 
 	// Select the clicked sensor
-	sensorStore.updateSensor(sensor._id, { selected: true });
+	sensorStore.updateSensor(sensor.id, { selected: true });
 };
 </script>

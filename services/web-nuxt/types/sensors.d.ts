@@ -1,7 +1,7 @@
 export interface Sensor {
-	_id: string;
+	id: string;
 	ip: string;
-	espId: string;
+	espID: string;
 	displayName: string;
 	temperatureOffset: number;
 	humidityOffset: number;

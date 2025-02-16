@@ -10,7 +10,7 @@ export const useSensorStore = defineStore('sensor', {
 			this.sensors = sensors;
 		},
 		updateSensor(id: string, updatedSensor: Partial<Sensor>) {
-			const sensorIndex = this.sensors.findIndex((sensor) => sensor._id === id);
+			const sensorIndex = this.sensors.findIndex((sensor) => sensor.id === id);
 			if (sensorIndex !== -1) {
 				this.sensors[sensorIndex] = {
 					...this.sensors[sensorIndex],
@@ -24,7 +24,7 @@ export const useSensorStore = defineStore('sensor', {
 			this.sensors.forEach((sensor) => (sensor.selected = false));
 		},
 		getSensorById(id: string): Sensor | undefined {
-			return this.sensors.find((sensor) => sensor._id === id);
+			return this.sensors.find((sensor) => sensor.id === id);
 		},
 	},
 });

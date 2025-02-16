@@ -6,7 +6,7 @@
         <div class="mb-4">
           <label class="block text-gray-300">Select Sensor</label>
           <select v-model="selectedSensorId" class="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white" @change="fetchSettings">
-            <option v-for="sensor in sensors" :key="sensor._id" :value="sensor._id">{{ sensor.displayName || sensor.ip }}</option>
+            <option v-for="sensor in sensors" :key="sensor.id" :value="sensor.id">{{ sensor.displayName || sensor.espID }}</option>
           </select>
         </div>
         <div class="mb-4">
@@ -55,7 +55,7 @@ const sensors = ref([]);
 const fetchSensors = () => {
   sensors.value = sensorStore.sensors;
   if (sensors.value.length > 0) {
-    selectedSensorId.value = sensors.value[0]._id;
+    selectedSensorId.value = sensors.value[0].id;
     fetchSettings();
   }
 };
@@ -75,6 +75,15 @@ const fetchSettings = () => {
 
 const updateSettings = async () => {
   try {
+    const { $sensorsApi } = useNuxtApp();
+    const request = {
+      id: selectedSensorId.value,
+      displayName: settings.value.displayName,
+      temperatureOffset: settings.value.temperatureOffset,
+      humidityOffset: settings.value.humidityOffset,
+    };
+    console.log('Updating sensor settings:', request);
+    await $sensorsApi.sensorPatch(request);
     sensorStore.updateSensor(selectedSensorId.value, settings.value);
     props.onClose();
   } catch (error) {
