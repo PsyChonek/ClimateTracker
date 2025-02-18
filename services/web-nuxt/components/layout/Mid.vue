@@ -9,7 +9,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { useNuxtApp, useAsyncData } from '#app';
-import SensorChart from '../SensorCharttemp.vue';
+import SensorChart from '../SensorChart.vue';
 import SettingsModal from '../SettingsModal.vue';
 import { useReadingStore } from '../stores/reading';
 

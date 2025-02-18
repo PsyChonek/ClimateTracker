@@ -8,6 +8,6 @@
 
 <script setup>
 import Top from './Top.vue';
-import Mid from './midtemp.vue';
+import Mid from './Mid.vue';
 import Bot from './Bot.vue';
 </script>
