@@ -82,7 +82,7 @@ export interface AllReadingsGet200ResponseInner {
 	 * @type {string}
 	 * @memberof AllReadingsGet200ResponseInner
 	 */
-	sensorID?: string;
+	espID?: string;
 	/**
 	 *
 	 * @type {number}
@@ -169,7 +169,7 @@ export interface NewReadingPostRequest {
 	 * @type {string}
 	 * @memberof NewReadingPostRequest
 	 */
-	sensorID: string;
+	espID: string;
 	/**
 	 * Temperature reading in Celsius.
 	 * @type {number}

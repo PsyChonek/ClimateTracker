@@ -26,6 +26,11 @@ onMounted(() => {
 		if (chartRef.value?.chart) {
 			chartRef.value.chart.resize();
 		}
+
+		// Redraw the chart
+		if (chartRef.value?.chart) {
+			chartRef.value.chart.update();
+		}
 	};
 
 	window.addEventListener('resize', handleResize);
