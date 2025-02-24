@@ -55,7 +55,7 @@ const sensors = ref([]);
 const fetchSensors = () => {
   sensors.value = sensorStore.sensors;
   if (sensors.value.length > 0) {
-    selectedSensorId.value = sensors.value[0].id;
+    selectedSensorId.value = sensorStore.getSelectedSensors().id;
     fetchSettings();
   }
 };
@@ -101,7 +101,3 @@ watch(() => props.show, (newVal) => {
   }
 });
 </script>
-
-<style scoped>
-/* Add your styles here */
-</style>

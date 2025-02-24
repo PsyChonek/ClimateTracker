@@ -26,5 +26,8 @@ export const useSensorStore = defineStore('sensor', {
 		getSensorById(id: string): Sensor | undefined {
 			return this.sensors.find((sensor) => sensor.id === id);
 		},
+		getSelectedSensors(): Sensor {
+			return this.sensors.filter((sensor) => sensor.selected)[0];
+		},
 	},
 });

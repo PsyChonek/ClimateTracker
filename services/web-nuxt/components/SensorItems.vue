@@ -26,6 +26,11 @@ if (error.value) {
 	console.error("Error fetching sensors:", error.value);
 } else if (sensors.value) {
 	sensorStore.setSensors(sensors.value);
+
+	// Select the first sensor by default
+	if (sensorStore.sensors.length > 0) {
+		sensorStore.updateSensor(sensorStore.sensors[0].id, { selected: true });
+	}
 }
 
 const sensorClick = (sensor) => {
