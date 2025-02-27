@@ -271,7 +271,6 @@ fastify.patch(
 				type: "object",
 				properties: {
 					id: { type: "string", description: "Unique ID" },
-					espID: { type: "string", description: "Unique ID of the sensor." },
 					displayName: { type: "string", description: "Display name of the sensor." },
 					temperatureOffset: { type: "number", description: "Temperature offset value." },
 					humidityOffset: { type: "number", description: "Humidity offset value." },
@@ -290,7 +289,7 @@ fastify.patch(
 		},
 	},
 	async (request, reply) => {
-		const { id, espID, displayName, temperatureOffset, humidityOffset } = request.body;
+		const { id, displayName, temperatureOffset, humidityOffset } = request.body;
 
 		console.log("Updating sensor:", id);
 
@@ -302,7 +301,6 @@ fastify.patch(
 						displayName,
 						temperatureOffset,
 						humidityOffset,
-						espID,
 					},
 				}
 			);

@@ -1,13 +1,17 @@
 <template>
-	<div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] justify-items-center gap-4 w-full p-4">
-		<slot v-for="(item, index) in sensorStore.sensors" :key="index" :item="item">
-			<button :class="{ 'bg-purple-950': item.selected }" class="flex justify-center items-center p-2 border border-gray-300 w-[180px]" @click="sensorClick(item)">
-				<p>{{ item.displayName || item.espID }}</p>
-			</button>
-		</slot>
+	<div class="w-full h-full flex flex-col justify-center items-center">
+		<div class="p-2 bg-gray-800 rounded-lg shadow-md w-full">
+			<div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] justify-items-center gap-4 w-full">
+				<slot v-for="(item, index) in sensorStore.sensors" :key="index" :item="item">
+					<button :class="{ 'bg-purple-900': item.selected }" class="flex justify-center items-center p-2 border border-gray-300 w-[180px] rounded-lg shadow-md hover:bg-purple-800 transition-colors duration-300" @click="sensorClick(item)">
+						<p class="text-white font-bold">{{ item.displayName || item.espID }}</p>
+					</button>
+				</slot>
 
-		<!-- Show warning if API not available -->
-		<div v-if="error" class="text-red-500">Error fetching sensors</div>
+				<!-- Show warning if API not available -->
+				<div v-if="error" class="text-red-500">Error fetching sensors</div>
+			</div>
+		</div>
 	</div>
 </template>
 
