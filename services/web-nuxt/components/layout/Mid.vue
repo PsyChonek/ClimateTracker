@@ -1,6 +1,6 @@
 <template>
-  <div class="flex-1 p-4 flex flex-col justify-center items-center">
-    <SensorChart class="w-[90vw] max-h-[70vh] text-center flex flex-col items-center mx-auto" />
+  <div class="flex-1 p-4 flex flex-col justify-center items-center ">
+    <SensorChart class="w-full h-full flex-1 " />
     <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" @click="openModal">Modify Settings</button>
     <SettingsModal :show="showModal" @close="closeModal" />
   </div>

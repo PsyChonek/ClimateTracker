@@ -11,24 +11,24 @@ import { useReadingStore } from '../stores/reading';
 import { useSensorStore } from '~/stores/sensor';
 
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
+	Chart as ChartJS,
+	CategoryScale,
+	LinearScale,
+	PointElement,
+	LineElement,
+	Title,
+	Tooltip,
+	Legend
 } from 'chart.js'
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
+	CategoryScale,
+	LinearScale,
+	PointElement,
+	LineElement,
+	Title,
+	Tooltip,
+	Legend
 )
 
 
@@ -66,6 +66,7 @@ const labelAngle = 45;
 const chartOptions = ref({
 	responsive: true,
 	maintainAspectRatio: false,
+
 	animation: {
 		duration: 500,
 	},
