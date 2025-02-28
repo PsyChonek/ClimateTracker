@@ -76,7 +76,6 @@ fastify.post(
 					espID: { type: "string", description: "Unique ID of the sensor." },
 					temperature: { type: "number", description: "Temperature reading in Celsius." },
 					humidity: { type: "number", description: "Humidity reading in percentage." },
-					timestamp: { type: "string", format: "string", description: "Timestamp of the reading." },
 				},
 				required: ["espID", "temperature", "humidity"],
 			},
@@ -92,11 +91,11 @@ fastify.post(
 		},
 	},
 	async (request, reply) => {
-		const { espID, temperature, humidity, timestamp } = request.body;
+		const { espID, temperature, humidity} = request.body;
 
 		console.log("Adding new reading:", request.body);
 
-		let timestampNew = timestamp ? (timestamp.length === 10 ? new Date(parseInt(timestamp) * 1000).toISOString() : timestamp) : new Date().toISOString();
+		let timestampNew = new Date().toISOString();
 
 		var log = {
 			espID: espID,
