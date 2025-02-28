@@ -47,6 +47,7 @@ await fastify.register(fastifySwaggerUI, {
 		return swaggerObject;
 	},
 	transformSpecificationClone: true,
+	allowedHosts: ['http://localhost:3000'], // Allow HTTP
 });
 
 const PORT = process.env.PORT || 27017;
@@ -105,7 +106,7 @@ fastify.post(
 
 		const newReading = { espID, temperature, humidity, timestamp: new Date(timestampNew) };
 		const result = await readings.insertOne(newReading);
-		return result;
+		reply.send(result);
 	}
 );
 
@@ -166,7 +167,7 @@ fastify.get(
 				delete reading._id;
 			});
 
-			return result;
+			reply.send(result);
 		} catch (error) {
 			console.error("Error querying MongoDB:", error);
 			reply.code(500).send({ error: "Failed to fetch readings." });
@@ -214,7 +215,7 @@ fastify.post(
 		}
 
 		const result = await sensors.insertOne(newSensor);
-		return result;
+		reply.send(result);
 	}
 );
 
@@ -257,7 +258,7 @@ fastify.get(
 		});
 
 		console.log(result);
-		return result;
+		reply.send(result);
 	}
 );
 
