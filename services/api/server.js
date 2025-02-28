@@ -47,7 +47,7 @@ await fastify.register(fastifySwaggerUI, {
 		return swaggerObject;
 	},
 	transformSpecificationClone: true,
-	allowedHosts: ['http://localhost:3000'], // Allow HTTP
+	allowedHosts: ['http://vazypi.local:9051'],
 });
 
 const PORT = process.env.PORT || 27017;
@@ -76,7 +76,7 @@ fastify.post(
 					espID: { type: "string", description: "Unique ID of the sensor." },
 					temperature: { type: "number", description: "Temperature reading in Celsius." },
 					humidity: { type: "number", description: "Humidity reading in percentage." },
-					timestamp: { type: "string", format: "date-time", description: "Timestamp of the reading." },
+					timestamp: { type: "string", format: "string", description: "Timestamp of the reading." },
 				},
 				required: ["espID", "temperature", "humidity"],
 			},
@@ -93,6 +93,8 @@ fastify.post(
 	},
 	async (request, reply) => {
 		const { espID, temperature, humidity, timestamp } = request.body;
+
+		console.log("Adding new reading:", request.body);
 
 		let timestampNew = timestamp ? (timestamp.length === 10 ? new Date(parseInt(timestamp) * 1000).toISOString() : timestamp) : new Date().toISOString();
 
