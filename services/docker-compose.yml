@@ -7,7 +7,7 @@ services:
     networks:
       - default
     ports:
-      - 9050:3000
+      - 80:3000
     depends_on:
       - api
     develop:
@@ -16,21 +16,6 @@ services:
           path: ./web-nuxt
     environment:
       - NUXT_PUBLIC_API_BASE_URL=https://api:3000
-  web:
-    build: ./web
-    container_name: climate-web
-    restart: always
-    networks:
-      - default
-    ports:
-      - 80:80
-    depends_on:
-      - api
-    develop:
-      watch:
-        - action: sync
-          path: ./web/src
-          target: ./usr/share/nginx/html
   db:
     build: ./db
     container_name: climate-db
