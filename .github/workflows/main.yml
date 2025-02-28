@@ -1,4 +1,5 @@
-name: Deploy website to pi
+name: Deploy website to PI
+
 on:
   push:
     branches:
@@ -10,7 +11,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Stop docker containers
-        run: sudo docker compose down || true
+        run: sudo docker compose down --volumes || true
 
   build_and_start:
     name: Build and start docker containers
