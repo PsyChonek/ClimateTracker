@@ -205,8 +205,10 @@ fastify.post(
 		const { ip, espID } = request.body;
 		const newSensor = { ip, espID };
 
+		console.log("Adding sensor:", newSensor);
+
 		// Check if same sensor already exists
-		const existingSensor = await sensors.findOne({ ip });
+		const existingSensor = await sensors.findOne({ ip, espID });
 		if (existingSensor) {
 			reply.code(400).send({ error: "Sensor already exists." });
 		}
