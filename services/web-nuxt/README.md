@@ -25,19 +25,21 @@ Make sure you have the following installed:
 ### Installation
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/ClimateTracker.git
-    cd ClimateTracker
-    ```
+
+   ```bash
+   git clone https://github.com/yourusername/ClimateTracker.git
+   cd ClimateTracker
+   ```
 
 2. Install dependencies:
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 ### Running the Application
 
 To start the development server, run:
+
 ```bash
 npm run dev
 ```
@@ -47,6 +49,7 @@ The application will be available at `http://localhost:3000`.
 ### Building for Production
 
 To build the application for production, run:
+
 ```bash
 npm run build
 npm run preview
@@ -55,6 +58,7 @@ npm run preview
 ### Linting and Formatting
 
 To lint and format the code, run:
+
 ```bash
 npm run lint
 npm run lint:fix

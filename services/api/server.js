@@ -4,6 +4,7 @@ import connect from "./db.js";
 import cors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
+import { ObjectId } from "mongodb";
 
 const fastify = Fastify({
 	logger: true,
@@ -58,6 +59,7 @@ console.log(`Connecting to ${HOST}:${PORT}`);
 
 const db = await connect(PORT, HOST, USER, PASSWORD, DATABASE);
 const readings = db.collection("readings");
+const sensors = db.collection("sensors");
 
 // POST newReading
 fastify.post(
@@ -70,43 +72,44 @@ fastify.post(
 			body: {
 				type: "object",
 				properties: {
-					sensorID: { type: "string", description: "Unique ID of the sensor." },
+					espID: { type: "string", description: "Unique ID of the sensor." },
 					temperature: { type: "number", description: "Temperature reading in Celsius." },
 					humidity: { type: "number", description: "Humidity reading in percentage." },
 					timestamp: { type: "string", format: "date-time", description: "Timestamp of the reading." },
 				},
-				required: ["sensorID", "temperature", "humidity"],
+				required: ["espID", "temperature", "humidity"],
 			},
 			response: {
 				200: {
 					description: "Reading successfully added.",
 					type: "object",
 					properties: {
-						insertedId: { type: "string" },
+						insertedID: { type: "string" },
 					},
 				},
 			},
 		},
 	},
 	async (request, reply) => {
-		const { sensorID, temperature, humidity, timestamp } = request.body;
+		const { espID, temperature, humidity, timestamp } = request.body;
 
 		let timestampNew = timestamp ? (timestamp.length === 10 ? new Date(parseInt(timestamp) * 1000).toISOString() : timestamp) : new Date().toISOString();
 
 		var log = {
-			sensorID: sensorID,
+			espID: espID,
 			temperature: temperature,
 			humidity: humidity,
 			timestamp: timestampNew,
 		};
 		console.log(log);
 
-		const newReading = { sensorID, temperature, humidity, timestamp: new Date(timestampNew) };
+		const newReading = { espID, temperature, humidity, timestamp: new Date(timestampNew) };
 		const result = await readings.insertOne(newReading);
 		return result;
 	}
 );
 
+// GET allReadings, readings request api to get all readings from the database
 fastify.get(
 	"/allReadings",
 	{
@@ -128,7 +131,8 @@ fastify.get(
 					items: {
 						type: "object",
 						properties: {
-							sensorID: { type: "string" },
+							id: { type: "string" },
+							espID: { type: "string" },
 							temperature: { type: "number" },
 							humidity: { type: "number" },
 							timestamp: { type: "string", format: "date-time" },
@@ -156,6 +160,12 @@ fastify.get(
 				})
 				.toArray();
 
+			// Change the _id to id
+			result.forEach((reading) => {
+				reading.id = reading._id;
+				delete reading._id;
+			});
+
 			return result;
 		} catch (error) {
 			console.error("Error querying MongoDB:", error);
@@ -164,7 +174,7 @@ fastify.get(
 	}
 );
 
-// POST Add sensor, sensors request api to add it to the database and return the sensorID api will store IP address and port of the sensor to allow communication with it
+// POST Add sensor, sensors request api to add it to the database and return the espID api will store IP address and port of the sensor to allow communication with it
 fastify.post(
 	"/addSensor",
 	{
@@ -176,26 +186,31 @@ fastify.post(
 				type: "object",
 				properties: {
 					ip: { type: "string", format: "ipv4", description: "IP address of the sensor." },
-					port: { type: "number", description: "Port number of the sensor." },
+					espID: { type: "string", description: "Unique ID of the sensor." },
 				},
-				required: ["ip", "port"],
+				required: ["ip"],
 			},
 			response: {
 				200: {
 					description: "Sensor successfully added.",
 					type: "object",
 					properties: {
-						insertedId: { type: "string" },
+						insertedID: { type: "string" },
 					},
 				},
 			},
 		},
 	},
 	async (request, reply) => {
-		const { ip, port } = request.body;
-		const sensorID = request.query.sensorID;
+		const { ip, espID } = request.body;
+		const newSensor = { ip, espID };
 
-		const newSensor = { ip, port, sensorID };
+		// Check if same sensor already exists
+		const existingSensor = await sensors.findOne({ ip });
+		if (existingSensor) {
+			reply.code(400).send({ error: "Sensor already exists." });
+		}
+
 		const result = await sensors.insertOne(newSensor);
 		return result;
 	}
@@ -216,9 +231,12 @@ fastify.get(
 					items: {
 						type: "object",
 						properties: {
+							id: { type: "string" },
 							ip: { type: "string" },
-							port: { type: "number" },
-							sensorID: { type: "string" },
+							espID: { type: "string" },
+							displayName: { type: "string" },
+							temperatureOffset: { type: "number" },
+							humidityOffset: { type: "number" },
 						},
 					},
 				},
@@ -226,7 +244,17 @@ fastify.get(
 		},
 	},
 	async (request, reply) => {
-		const result = await sensors.find({}).toArray();
+		console.log("Getting all sensors");
+
+		const result = await sensors.find().toArray();
+
+		// Change the _id to id
+		result.forEach((sensor) => {
+			sensor.id = sensor._id;
+			delete sensor._id;
+		});
+
+		console.log(result);
 		return result;
 	}
 );
@@ -242,12 +270,12 @@ fastify.patch(
 			body: {
 				type: "object",
 				properties: {
-					sensorID: { type: "string", description: "Unique ID of the sensor." },
-					displayName: { type: "string", description: "Display name for the sensor." },
+					id: { type: "string", description: "Unique ID" },
+					displayName: { type: "string", description: "Display name of the sensor." },
 					temperatureOffset: { type: "number", description: "Temperature offset value." },
 					humidityOffset: { type: "number", description: "Humidity offset value." },
 				},
-				required: ["sensorID"],
+				required: ["id"],
 			},
 			response: {
 				200: {
@@ -261,19 +289,31 @@ fastify.patch(
 		},
 	},
 	async (request, reply) => {
-		const { sensorID, displayName, temperatureOffset, humidityOffset } = request.body;
-		const result = await sensors.update
-			.findOne({
-				sensorID: sensorID,
-			})
-			.updateOne({
-				$set: {
-					displayName: displayName,
-					temperatureOffset: temperatureOffset,
-					humidityOffset: humidityOffset,
-				},
-			});
-		return result;
+		const { id, displayName, temperatureOffset, humidityOffset } = request.body;
+
+		console.log("Updating sensor:", id);
+
+		try {
+			const result = await sensors.updateOne(
+				{ _id: new ObjectId(id) }, // Convert string `id` to ObjectId
+				{
+					$set: {
+						displayName,
+						temperatureOffset,
+						humidityOffset,
+					},
+				}
+			);
+
+			if (result.modifiedCount === 0) {
+				reply.code(404).send({ error: "Sensor not found or no changes made" });
+			} else {
+				reply.send({ message: "Sensor updated successfully" });
+			}
+		} catch (error) {
+			console.error("Error updating sensor:", error);
+			reply.code(500).send({ error: "Internal server error" });
+		}
 	}
 );
 

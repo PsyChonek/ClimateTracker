@@ -10,26 +10,34 @@
 		"postinstall": "nuxt prepare",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"generate-api-client": "openapi-generator-cli generate -i http://localhost:9051/documentation/json -g typescript-axios -o clients/api && npm run format"
 	},
 	"dependencies": {
+		"@vue/composition-api": "^1.7.2",
+		"axios": "^1.7.9",
 		"chart.js": "^4.4.7",
-		"nuxt": "^3.14.1592",
+		"chartjs-plugin-datalabels": "^2.2.0",
+		"nuxt": "^3.15.4",
+		"pinia": "^2.3.1",
 		"vue": "latest",
 		"vue-chartjs": "^5.3.2",
 		"vue-router": "latest"
 	},
 	"devDependencies": {
 		"@formkit/auto-animate": "^0.8.2",
-		"@nuxt/eslint-config": "^0.7.4",
+		"@nuxt/eslint-config": "^1.0.1",
 		"@nuxtjs/eslint-module": "^4.1.0",
-		"@nuxtjs/tailwindcss": "^6.12.2",
+		"@nuxtjs/tailwindcss": "^6.13.1",
 		"@pinia/nuxt": "^0.9.0",
-		"eslint": "^9.17.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-prettier": "^5.2.1",
-		"prettier": "^3.4.2",
-		"typescript": "^5.7.2",
-		"vue-tsc": "^2.1.10"
+		"eslint": "^9.20.0",
+		"eslint-config-prettier": "^10.0.1",
+		"eslint-plugin-prettier": "^5.2.3",
+		"prettier": "^3.5.0",
+		"typescript": "^5.7.3",
+		"vue-tsc": "^2.2.0"
+	},
+	"overrides": {
+		"vue": "latest"
 	}
 }

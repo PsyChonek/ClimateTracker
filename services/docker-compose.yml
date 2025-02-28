@@ -1,21 +1,21 @@
 name: climate-tracker
 services:
-  web:
-    build: ./web
-    container_name: climate-web
+  web-nuxt:
+    build: ./web-nuxt
+    container_name: climate-web-nuxt
     restart: always
     networks:
       - default
     ports:
-      - 80:80
+      - 80:3000
     depends_on:
-      - db
       - api
     develop:
       watch:
-        - action: sync
-          path: ./web/src
-          target: ./usr/share/nginx/html
+        - action: rebuild
+          path: ./web-nuxt
+    environment:
+      - NUXT_PUBLIC_API_BASE_URL=https://api:3000
   db:
     build: ./db
     container_name: climate-db
