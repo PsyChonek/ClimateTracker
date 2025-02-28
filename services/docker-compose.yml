@@ -29,8 +29,7 @@ services:
     ports:
       - 9052:27017
     volumes:
-      # - /home/vazy/ClimateTracker/db:/data/db
-      - ./db/data:/data/db
+      - /home/dockerData/ClimateTracker/db:/data/db
   api:
     build: ./api
     container_name: climate-api
