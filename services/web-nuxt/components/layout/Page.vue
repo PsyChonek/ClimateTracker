@@ -9,5 +9,5 @@
 <script setup>
 import Top from './Top.vue';
 import Mid from './Mid.vue';
-import Bot from './Bot.vue';
+import Bot from './Bot2.vue';
 </script>
