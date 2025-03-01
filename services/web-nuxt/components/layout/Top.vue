@@ -4,6 +4,6 @@
 			Climate Tracker
 		</h1> -->
 		<SensorItems />
+
 	</div>
 </template>
- 

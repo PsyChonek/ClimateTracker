@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col min-h-screen max-h-screen max-w-screen min-w-screen">
+	<div class="flex flex-col min-h-screen max-h-screen max-w-screen min-w-screen p-3">
 		<Top />
 		<Mid />
 		<Bot />
