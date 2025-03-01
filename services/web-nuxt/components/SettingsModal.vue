@@ -1,25 +1,25 @@
 <template>
   <div v-if="show" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center p-1 gap-2">
-    <div class="bg-gray-800 p-4 rounded-lg shadow-md w-2/3 text-center">
+    <div class="bg-gray-800 p-4 rounded-lg shadow-md min-w-2/3 text-center">
       <h2 class="text-xl mb-4 text-white">Modify Settings</h2>
       <form @submit.prevent="updateSettings">
         <div class="grid grid-cols-1 gap-4">
-          <div class="flex items-center">
-            <label class="w-1/3 text-lg font-bold text-gray-300 text-left">Select Sensor</label>
+          <div class="flex items-center gap-2">
+            <label class="w-1/2 text-lg font-bold text-gray-300 text-left">Select Sensor</label>
             <select v-model="selectedSensorId" class="w-2/3 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" @change="fetchSettings">
               <option v-for="sensor in sensors" :key="sensor.id" :value="sensor.id">{{ sensor.displayName || sensor.espID }}</option>
             </select>
           </div>
-          <div class="flex items-center">
-            <label class="w-1/3 text-lg font-bold text-gray-300 text-left">Display Name</label>
+          <div class="flex items-center gap-2">
+            <label class="w-1/2 text-lg font-bold text-gray-300 text-left">Display Name</label>
             <input v-model="settings.displayName" type="text" class="w-2/3 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10">
           </div>
-          <div class="flex items-center">
-            <label class="w-1/3 text-lg font-bold text-gray-300 text-left">Temperature Offset</label>
+          <div class="flex items-center gap-2">
+            <label class="w-1/2 text-lg font-bold text-gray-300 text-left">Temperature Offset</label>
             <input v-model="settings.temperatureOffset" type="number" class="w-2/3 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10">
           </div>
-          <div class="flex items-center">
-            <label class="w-1/3 text-lg font-bold text-gray-300 text-left">Humidity Offset</label>
+          <div class="flex items-center gap-2">
+            <label class="w-1/2 text-lg font-bold text-gray-300 text-left">Humidity Offset</label>
             <input v-model="settings.humidityOffset" type="number" class="w-2/3 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10">
           </div>
         </div>

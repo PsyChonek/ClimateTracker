@@ -1,39 +1,44 @@
 <template>
   <div class="w-full h-full flex flex-col justify-center items-center p-1 gap-2">
     <!-- Settings for what is shown on the chart -->
-    <div class="p-2 bg-gray-800 rounded-lg shadow-md">
-      <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-        <div class="flex flex-col">
-          <label for="howManyShow" class="mb-1 text-xs font-medium text-gray-300">Show</label>
-          <input type="number" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" id="howManyShow" placeholder="10" min="1" max="1000" v-model="filters.howManyShow">
-        </div>
-        <div class="flex flex-col">
-          <label for="howManySkip" class="mb-1 text-xs font-medium text-gray-300">Skip</label>
-          <input type="number" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" id="howManySkip" placeholder="0" min="1" max="1000" v-model="filters.howManySkip">
-        </div>
-        <div class="flex flex-col">
-          <label for="labelAngle" class="mb-1 text-xs font-medium text-gray-300">Angle</label>
-          <input type="number" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" id="labelAngle" placeholder="45" min="0" max="90" v-model="filters.labelAngle">
-        </div>
-        <div class="flex flex-col">
-          <label for="labelOffset" class="mb-1 text-xs font-medium text-gray-300">Count</label>
-          <input type="text" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" id="dataCount" v-model="filters.dataCount" disabled>
-        </div>
-        <div class="flex flex-col">
-          <label class="mb-1 text-xs font-medium text-gray-300">Date Range</label>
-          <div class="flex space-x-1">
-            <input class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" type="date" id="dateFrom" v-model="filters.dateFrom">
-            <input class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" type="date" id="dateTo" v-model="filters.dateTo">
+    <div class="p-2 bg-gray-800 rounded-lg shadow-md w-full relative">
+      <details class="w-full">
+        <summary class="text-gray-300 cursor-pointer">Chart Settings</summary>
+        <div class="absolute z-10 left-0 right-0 bg-gray-800 p-2 rounded-b-lg shadow-lg border border-gray-700 mt-1">
+          <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+            <div class="flex flex-col">
+              <label for="howManyShow" class="mb-1 text-xs font-medium text-gray-300">Show</label>
+              <input v-model="filters.howManyShow" type="number" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" placeholder="10" min="1" max="1000">
+            </div>
+            <div class="flex flex-col">
+              <label for="howManySkip" class="mb-1 text-xs font-medium text-gray-300">Skip</label>
+              <input v-model="filters.howManySkip" type="number" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" placeholder="0" min="1" max="1000">
+            </div>
+            <div class="flex flex-col">
+              <label for="labelAngle" class="mb-1 text-xs font-medium text-gray-300">Angle</label>
+              <input v-model="filters.labelAngle" type="number" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" placeholder="45" min="0" max="90">
+            </div>
+            <div class="flex flex-col">
+              <label for="labelOffset" class="mb-1 text-xs font-medium text-gray-300">Count</label>
+              <input v-model="filters.dataCount" type="text" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10" disabled>
+            </div>
+            <div class="flex flex-col">
+              <label class="mb-1 text-xs font-medium text-gray-300">Date Range</label>
+              <div class="flex space-x-1">
+                <input v-model="filters.dateFrom" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10 w-full" type="date">
+                <input v-model="filters.dateTo" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10 w-full" type="date">
+              </div>
+            </div>
+            <div class="flex flex-col ">
+              <label class="mb-1 text-xs font-medium text-gray-300">Time Range</label>
+              <div class="flex space-x-1">
+                <input v-model="filters.timeFrom" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10 w-full" type="time">
+                <input v-model="filters.timeTo" class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10 w-full" type="time">
+              </div>
+            </div>
           </div>
         </div>
-        <div class="flex flex-col ">
-          <label class="mb-1 text-xs font-medium text-gray-300">Time Range</label>
-          <div class="flex space-x-1">
-            <input class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10 w-full" type="time" id="timeFrom" v-model="filters.timeFrom">
-            <input class="p-1 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10 w-full" type="time" id="timeTo" v-model="filters.timeTo">
-          </div>
-        </div>
-      </div>
+      </details>
     </div>
     <div class="p-2 bg-gray-800 rounded-lg shadow-md w-full h-full flex-1">
       <Line ref="chartRef" :data="chartData" :options="chartOptions" />
@@ -43,7 +48,7 @@
 
 <script setup>
 import { Line } from 'vue-chartjs';
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useReadingStore } from '../stores/reading';
 import { useSensorStore } from '~/stores/sensor';
 
@@ -95,16 +100,14 @@ const chartData = ref({
 
 // Calculate default date range (last 30 days)
 const today = new Date();
-const thirtyDaysAgo = new Date();
-thirtyDaysAgo.setDate(today.getDate() - 30);
 
 const filters = ref({
   howManyShow: 10,
   howManySkip: 0,
   labelAngle: 45,
   dataCount: 0,
-  dateFrom: thirtyDaysAgo.toISOString().substr(0, 10),
-  dateTo: today.toISOString().substr(0, 10),
+  dateFrom: today.toISOString().substring(0, 10),
+  dateTo: today.toISOString().substring(0, 10),
   timeFrom: '00:00',
   timeTo: '23:59'
 });
@@ -133,7 +136,7 @@ const chartOptions = ref({
       display: true,
       position: "bottom",
       labels: {
-        color: '#D1D5DB', 
+        color: '#D1D5DB',
       },
     },
     tooltip: {
@@ -174,9 +177,10 @@ const chartOptions = ref({
         color: "rgba(155, 155, 155, 0.1)",
       },
       ticks: {
-        color: '#D1D5DB', 
+        color: '#D1D5DB',
       },
-      max: 100,
+      max: 80,
+      min: 10,
       offset: false,
     },
     x: {
@@ -276,20 +280,20 @@ sensorStore.$subscribe(() => {
 onMounted(() => {
   setChartData();
 
-  const handleResize = () => {
-    if (chartRef.value?.chart) {
-      chartRef.value.chart.resize();
-    }
+  // const handleResize = () => {
+  //   if (chartRef.value?.chart) {
+  //     chartRef.value.chart.resize();
+  //   }
 
-    if (chartRef.value?.chart) {
-      chartRef.value.chart.update();
-    }
-  };
+  //   if (chartRef.value?.chart) {
+  //     chartRef.value.chart.update();
+  //   }
+  // };
 
-  window.addEventListener('resize', handleResize);
+  // window.addEventListener('resize', handleResize);
 
-  onBeforeUnmount(() => {
-    window.removeEventListener('resize', handleResize);
-  });
+  // onBeforeUnmount(() => {
+  //   window.removeEventListener('resize', handleResize);
+  // });
 });
 </script>

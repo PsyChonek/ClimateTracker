@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     plugins: ['~/plugins/api', '~/plugins/pinia'],
     runtimeConfig: {
         public: {
-            apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:9051',
+            apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://vazypi.local:9051',
         },
     },
 });
