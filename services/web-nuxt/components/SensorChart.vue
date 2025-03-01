@@ -309,9 +309,11 @@ const setChartData = () => {
   );
 
   const newTemperatureData = limitedReadings.map(
-    (reading) => reading.temperature
+    (reading) => reading.temperature + selectedSensor.temperatureOffset
   );
-  const newHumidityData = limitedReadings.map((reading) => reading.humidity);
+  const newHumidityData = limitedReadings.map(
+    (reading) => reading.humidity + selectedSensor.humidityOffset
+  );
 
   chartData.value = {
     labels: newLabels,
