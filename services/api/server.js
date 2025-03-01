@@ -194,7 +194,7 @@ fastify.post(
 					ip: { type: "string", format: "ipv4", description: "IP address of the sensor." },
 					espID: { type: "string", description: "Unique ID of the sensor." },
 				},
-				required: ["ip"],
+				required: ["ip", "espID"],
 			},
 			response: {
 				200: {
@@ -213,10 +213,10 @@ fastify.post(
 
 		console.log("Adding sensor:", newSensor);
 
-		// Check if same sensor already exists
-		const existingSensor = await sensors.findOne({ ip, espID });
+		// Check if sensor with the same espID already exists
+		const existingSensor = await sensors.findOne({ espID });
 		if (existingSensor) {
-			reply.code(400).send({ error: "Sensor already exists." });
+			reply.code(400).send({ error: "Sensor with this espID already exists." });
 			return;
 		}
 
