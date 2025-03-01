@@ -26,7 +26,7 @@ String espID;
 void connectToWifi();
 void setUpTime();
 
-String getValuesJSON(float temperature, float humidity, int timestamp, String espID);
+String getValuesJSON(float temperature, float humidity, String espID);
 
 String readReading();
 
@@ -48,25 +48,42 @@ void setup()
   else
   {
     File file = SPIFFS.open("/espID.txt", "r");
-    if (!file)
-    {
-      Serial.println("Failed to open file for reading");
 
-      file = SPIFFS.open("/espID.txt", "w");
+    while (espID == "")
+    {
       if (!file)
       {
-        Serial.println("Failed to open file for writing");
-      }
-      else
-      {
-        espID = String(random(1000, 9999));
-        Serial.println("Esp ID: " + espID);
+        Serial.println("Failed to open file for reading");
 
-        file.print(espID);     
+        file = SPIFFS.open("/espID.txt", "w");
+        if (!file)
+        {
+          Serial.println("Failed to open file for writing");
+        }
+        else
+        {
+          espID = String(random(1000, 9999));
+          file.print(espID);
+        }
+      }
+
+      espID = file.readString();
+      if (espID == "")
+      {
+        file.close();
+        file = SPIFFS.open("/espID.txt", "w");
+        if (!file)
+        {
+          Serial.println("Failed to open file for writing");
+        }
+        else
+        {
+          espID = String(random(1000, 9999));
+          file.print(espID);
+        }
       }
     }
 
-    espID = file.readString();
     Serial.println("Esp ID: " + espID);
 
     file.close();
@@ -112,7 +129,7 @@ void connectToWifi()
 
 String readReading()
 {
-  return getValuesJSON(dht.readTemperature(), dht.readHumidity(), time(&now), espID);
+  return getValuesJSON(dht.readTemperature(), dht.readHumidity(), espID);
 }
 
 void sendInfo()
@@ -122,7 +139,7 @@ void sendInfo()
 
   String values;
   serializeJson(status, values);
-  
+
   Serial.println("making POST request");
 
   String path = "/addSensor";
@@ -159,7 +176,7 @@ void sendReading(String value)
 }
 
 // Send values to web page
-String getValuesJSON(float temperature, float humidity, int timestamp = 0, String espID = "")
+String getValuesJSON(float temperature, float humidity, String espID = "")
 {
   if (isnan(temperature) || isnan(humidity))
   {
@@ -170,7 +187,6 @@ String getValuesJSON(float temperature, float humidity, int timestamp = 0, Strin
   // Return values in JSON
   reading["temperature"] = temperature;
   reading["humidity"] = humidity;
-  reading["timestamp"] = timestamp;
   reading["espID"] = espID;
 
   String values;
@@ -197,6 +213,7 @@ void setUpTime()
     wait_time++;
     if (wait_time > max_wait_time)
     {
+      Serial.println("");
       Serial.println("Failed to obtain time. Check your network connection.");
       break;
     }

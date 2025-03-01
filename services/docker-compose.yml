@@ -15,7 +15,7 @@ services:
         - action: rebuild
           path: ./web-nuxt
     environment:
-      - NUXT_PUBLIC_API_BASE_URL=https://api:3000
+      - NUXT_PUBLIC_API_BASE_URL=http://api:3000
   db:
     build: ./db
     container_name: climate-db

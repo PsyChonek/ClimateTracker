@@ -25,6 +25,7 @@ await fastify.register(fastifySwagger, {
 			version: "0.1.0",
 		},
 	},
+	allowedHosts: ['http://vazypi.local:9051'],
 });
 
 await fastify.register(fastifySwaggerUI, {
@@ -108,6 +109,7 @@ fastify.post(
 		const newReading = { espID, temperature, humidity, timestamp: new Date(timestampNew) };
 		const result = await readings.insertOne(newReading);
 		reply.send(result);
+		return;
 	}
 );
 
@@ -169,9 +171,11 @@ fastify.get(
 			});
 
 			reply.send(result);
+			return;
 		} catch (error) {
 			console.error("Error querying MongoDB:", error);
 			reply.code(500).send({ error: "Failed to fetch readings." });
+			return;
 		}
 	}
 );
@@ -213,10 +217,12 @@ fastify.post(
 		const existingSensor = await sensors.findOne({ ip, espID });
 		if (existingSensor) {
 			reply.code(400).send({ error: "Sensor already exists." });
+			return;
 		}
 
 		const result = await sensors.insertOne(newSensor);
 		reply.send(result);
+		return;
 	}
 );
 
@@ -260,6 +266,7 @@ fastify.get(
 
 		console.log(result);
 		reply.send(result);
+		return;
 	}
 );
 
@@ -311,12 +318,15 @@ fastify.patch(
 
 			if (result.modifiedCount === 0) {
 				reply.code(404).send({ error: "Sensor not found or no changes made" });
+				return;
 			} else {
 				reply.send({ message: "Sensor updated successfully" });
+				return;
 			}
 		} catch (error) {
 			console.error("Error updating sensor:", error);
 			reply.code(500).send({ error: "Internal server error" });
+			return;
 		}
 	}
 );
