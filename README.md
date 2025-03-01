@@ -54,6 +54,11 @@ ClimateTracker allows you to monitor humidity and temperature using an ESP devic
 
 ## Images
 
+![docs/all.png](docs/all.png)
+![docs/filters.png](docs/filters.png)
+![docs/settings.png](docs/settings.png)
+![docs/mobile.png](docs/mobile.png)
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE.txt) file for details.
