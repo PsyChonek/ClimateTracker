@@ -43,16 +43,18 @@ def generate_readings(from_date, to_date, per_day, esp_id, api_ip):
     current_date = from_date
     prev_temp, prev_humid = None, None
     
+    # Calculate time interval between readings for even distribution
+    seconds_per_day = 24 * 60 * 60
+    interval_seconds = seconds_per_day / per_day
+    
     while current_date <= to_date:
-        for _ in range(per_day):
+        for i in range(per_day):
             sensor_data = generate_sensor_data(esp_id, prev_temp, prev_humid)
             
-            # Generate a timestamp with a random time during the current day
-            random_time = current_date.replace(hour=random.randint(0, 23), 
-                                               minute=random.randint(0, 59), 
-                                               second=random.randint(0, 59), 
-                                               microsecond=random.randint(0, 999999))
-            sensor_data["timestamp"] = random_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+            # Generate evenly distributed timestamp
+            offset_seconds = int(i * interval_seconds)
+            reading_time = current_date + timedelta(seconds=offset_seconds)
+            sensor_data["timestamp"] = reading_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
             
             # Send the reading
             send_reading(sensor_data, api_ip)

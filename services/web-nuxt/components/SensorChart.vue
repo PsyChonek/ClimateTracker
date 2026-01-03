@@ -227,8 +227,6 @@ const chartOptions = ref({
       ticks: {
         color: "#D1D5DB",
       },
-      max: 80,
-      min: 10,
       offset: false,
     },
     x: {
@@ -335,8 +333,14 @@ const setChartData = () => {
     ],
   };
 
+  // Update Y-axis min/max from sensor settings
+  chartOptions.value.scales.y.min = selectedSensor.chartYAxisMin ?? 10;
+  chartOptions.value.scales.y.max = selectedSensor.chartYAxisMax ?? 80;
+
   if (chartRef.value?.chart) {
-    chartRef.value.chart.update();
+    chartRef.value.chart.options.scales.y.min = selectedSensor.chartYAxisMin ?? 10;
+    chartRef.value.chart.options.scales.y.max = selectedSensor.chartYAxisMax ?? 80;
+    chartRef.value.chart.update('active');
   }
 };
 

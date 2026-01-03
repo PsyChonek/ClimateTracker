@@ -11,10 +11,9 @@ export default defineNuxtConfig({
         '@formkit/auto-animate',
         '@nuxtjs/eslint-module',
     ],
-    plugins: ['~/plugins/api', '~/plugins/pinia'],
+    plugins: ['~/plugins/pinia'],
     runtimeConfig: {
-        public: {
-            apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://vazypi.local:9051',
-        },
+        // Private - server-side only, never exposed to client
+        apiBaseUrl: process.env.API_BASE_URL || 'http://api:3000',
     },
 });

@@ -5,6 +5,8 @@ export interface Sensor {
 	displayName: string;
 	temperatureOffset: number;
 	humidityOffset: number;
+	chartYAxisMin: number;
+	chartYAxisMax: number;
 	state: 'online' | 'offline';
 	selected: boolean;
 }

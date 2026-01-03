@@ -35,17 +35,28 @@ const closeModal = () => {
 };
 
 const sensorStore = useSensorStore();
+const sensorsApi = useSensorsApi();
 
 const { data: sensors, error } = await useAsyncData('sensors', async () => {
-	const { $sensorsApi } = useNuxtApp();
-	const response = await $sensorsApi.allSensorsGet();
-	return response.data;
+	return await sensorsApi.getAllSensors();
 });
 
 if (error.value) {
 	console.error("Error fetching sensors:", error.value);
 } else if (sensors.value) {
-	sensorStore.setSensors(sensors.value);
+	// Add default values for missing properties
+	const sensorsWithDefaults = sensors.value.map((sensor) => ({
+		...sensor,
+		displayName: sensor.displayName || '',
+		temperatureOffset: sensor.temperatureOffset || 0,
+		humidityOffset: sensor.humidityOffset || 0,
+		chartYAxisMin: sensor.chartYAxisMin ?? 10,
+		chartYAxisMax: sensor.chartYAxisMax ?? 80,
+		state: sensor.state || 'offline',
+		selected: false,
+	}));
+	
+	sensorStore.setSensors(sensorsWithDefaults);
 
 	// Select the first sensor by default
 	if (sensorStore.sensors.length > 0) {

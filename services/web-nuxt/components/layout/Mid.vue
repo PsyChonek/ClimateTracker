@@ -5,29 +5,20 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useNuxtApp, useAsyncData } from '#app';
 import SensorChart from '../SensorChart.vue';
 import { useReadingStore } from '../stores/reading';
 
 const readingStore = useReadingStore();
+const readingsApi = useReadingsApi();
 
-const fetchChartData = async () => {
-  const { $readingsApi } = useNuxtApp();
-  const { data: readings, error } = await useAsyncData('readings', async () => {
-    const response = await $readingsApi.allReadingsGet();
-    return response.data;
-  });
-
-  if (error.value) {
-    console.error('Error fetching chart data:', error.value);
-    return;
-  }
-
-  readingStore.addAllReadings(readings.value);
-};
-
-onMounted(() => {
-  fetchChartData();
+// Fetch readings using useAsyncData at the top level
+const { data: readings, error } = await useAsyncData('readings', async () => {
+  return await readingsApi.getAllReadings();
 });
+
+if (error.value) {
+  console.error('Error fetching chart data:', error.value);
+} else if (readings.value) {
+  readingStore.addAllReadings(readings.value);
+}
 </script>

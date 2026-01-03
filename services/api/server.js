@@ -77,6 +77,7 @@ fastify.post(
 					espID: { type: "string", description: "Unique ID of the sensor." },
 					temperature: { type: "number", description: "Temperature reading in Celsius." },
 					humidity: { type: "number", description: "Humidity reading in percentage." },
+					timestamp: { type: "string", format: "date-time", description: "Optional timestamp. If not provided, current time will be used." },
 				},
 				required: ["espID", "temperature", "humidity"],
 			},
@@ -92,11 +93,12 @@ fastify.post(
 		},
 	},
 	async (request, reply) => {
-		const { espID, temperature, humidity} = request.body;
+		const { espID, temperature, humidity, timestamp } = request.body;
 
 		console.log("Adding new reading:", request.body);
 
-		let timestampNew = new Date().toISOString();
+		// Use provided timestamp or generate new one
+		let timestampNew = timestamp ? timestamp : new Date().toISOString();
 
 		var log = {
 			espID: espID,
@@ -247,6 +249,8 @@ fastify.get(
 							displayName: { type: "string" },
 							temperatureOffset: { type: "number" },
 							humidityOffset: { type: "number" },
+							chartYAxisMin: { type: "number" },
+							chartYAxisMax: { type: "number" },
 						},
 					},
 				},
@@ -285,6 +289,8 @@ fastify.patch(
 					displayName: { type: "string", description: "Display name of the sensor." },
 					temperatureOffset: { type: "number", description: "Temperature offset value." },
 					humidityOffset: { type: "number", description: "Humidity offset value." },
+					chartYAxisMin: { type: "number", description: "Chart Y-axis minimum value." },
+					chartYAxisMax: { type: "number", description: "Chart Y-axis maximum value." },
 				},
 				required: ["id"],
 			},
@@ -300,19 +306,22 @@ fastify.patch(
 		},
 	},
 	async (request, reply) => {
-		const { id, displayName, temperatureOffset, humidityOffset } = request.body;
+		const { id, displayName, temperatureOffset, humidityOffset, chartYAxisMin, chartYAxisMax } = request.body;
 
 		console.log("Updating sensor:", id);
 
 		try {
+			const updateFields = {};
+			if (displayName !== undefined) updateFields.displayName = displayName;
+			if (temperatureOffset !== undefined) updateFields.temperatureOffset = temperatureOffset;
+			if (humidityOffset !== undefined) updateFields.humidityOffset = humidityOffset;
+			if (chartYAxisMin !== undefined) updateFields.chartYAxisMin = chartYAxisMin;
+			if (chartYAxisMax !== undefined) updateFields.chartYAxisMax = chartYAxisMax;
+
 			const result = await sensors.updateOne(
 				{ _id: new ObjectId(id) }, // Convert string `id` to ObjectId
 				{
-					$set: {
-						displayName,
-						temperatureOffset,
-						humidityOffset,
-					},
+					$set: updateFields,
 				}
 			);
 

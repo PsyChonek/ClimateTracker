@@ -22,6 +22,14 @@
             <label class="w-1/2 text-lg font-bold text-gray-300 text-left">Humidity Offset</label>
             <input v-model="settings.humidityOffset" type="number" class="w-2/3 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10">
           </div>
+          <div class="flex items-center gap-2">
+            <label class="w-1/2 text-lg font-bold text-gray-300 text-left">Chart Y-Axis Min</label>
+            <input v-model="settings.chartYAxisMin" type="number" class="w-2/3 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10">
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="w-1/2 text-lg font-bold text-gray-300 text-left">Chart Y-Axis Max</label>
+            <input v-model="settings.chartYAxisMax" type="number" class="w-2/3 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-300 h-10">
+          </div>
         </div>
         <div class="flex justify-end mt-4">
           <button type="button" class="mr-2 px-4 py-2 bg-gray-600 text-white rounded-md" @click="closeModal">Cancel</button>
@@ -48,6 +56,8 @@ const settings = ref({
   displayName: '',
   temperatureOffset: 0,
   humidityOffset: 0,
+  chartYAxisMin: 10,
+  chartYAxisMax: 80,
 });
 
 const selectedSensorId = ref('');
@@ -69,6 +79,8 @@ const fetchSettings = () => {
       displayName: sensor.displayName || '',
       temperatureOffset: sensor.temperatureOffset || 0,
       humidityOffset: sensor.humidityOffset || 0,
+      chartYAxisMin: sensor.chartYAxisMin ?? 10,
+      chartYAxisMax: sensor.chartYAxisMax ?? 80,
     };
   } else {
     console.error('Sensor not found');
@@ -77,15 +89,16 @@ const fetchSettings = () => {
 
 const updateSettings = async () => {
   try {
-    const { $sensorsApi } = useNuxtApp();
+    const sensorsApi = useSensorsApi();
     const request = {
-      id: selectedSensorId.value,
       displayName: settings.value.displayName,
       temperatureOffset: settings.value.temperatureOffset,
       humidityOffset: settings.value.humidityOffset,
+      chartYAxisMin: settings.value.chartYAxisMin,
+      chartYAxisMax: settings.value.chartYAxisMax,
     };
     console.log('Updating sensor settings:', request);
-    await $sensorsApi.sensorPatch(request);
+    await sensorsApi.updateSensor(selectedSensorId.value, request);
     sensorStore.updateSensor(selectedSensorId.value, settings.value);
     props.onClose();
   } catch (error) {
