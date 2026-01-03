@@ -211,19 +211,41 @@ fastify.post(
 	},
 	async (request, reply) => {
 		const { ip, espID } = request.body;
-		const newSensor = { ip, espID };
 
-		console.log("Adding sensor:", newSensor);
+		console.log("Adding sensor:", { ip, espID });
 
 		// Check if sensor with the same espID already exists
 		const existingSensor = await sensors.findOne({ espID });
 		if (existingSensor) {
-			reply.code(400).send({ error: "Sensor with this espID already exists." });
+			// Update IP if it changed
+			if (existingSensor.ip !== ip) {
+				await sensors.updateOne(
+					{ espID },
+					{ $set: { ip } }
+				);
+				console.log(`Updated sensor ${espID} IP to ${ip}`);
+				reply.send({ message: "Sensor IP updated", id: existingSensor._id });
+			} else {
+				console.log(`Sensor ${espID} already exists with same IP`);
+				reply.send({ message: "Sensor already exists", id: existingSensor._id });
+			}
 			return;
 		}
 
+		// Create new sensor with default values
+		const newSensor = { 
+			ip, 
+			espID,
+			displayName: '',
+			temperatureOffset: 0,
+			humidityOffset: 0,
+			chartYAxisMin: 10,
+			chartYAxisMax: 80
+		};
+
 		const result = await sensors.insertOne(newSensor);
-		reply.send(result);
+		console.log(`New sensor ${espID} added with ID: ${result.insertedId}`);
+		reply.send({ insertedId: result.insertedId });
 		return;
 	}
 );
